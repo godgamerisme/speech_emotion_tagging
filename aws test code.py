@@ -122,6 +122,8 @@ class GetVideoService:
             'therapistName': response.therapist_name,
         }
 
+        return video, metadata
+
 
 get_video_service = GetVideoService()
 
