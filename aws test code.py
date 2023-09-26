@@ -2,6 +2,11 @@ import boto3
 from flask import Flask, request, jsonify
 import subprocess
 import tempfile
+from flask_cors import CORS
+import uuid
+
+app = Flask(__name__)
+CORS(app)
 
 
 class VideoProcessingService:
@@ -16,25 +21,27 @@ class VideoProcessingService:
 
 # service to upload video to S3 and other data to DynamoDB
 class VideoStoringService:
-    def store_video(self, video_data, tags, patient_name, therapist_name):
-        key = 1  # incremental counter
-        thumbnail = self.extract_thumbnail(video_data)
-
+    # def store_video(self, video_data, tags, patient_name, therapist_name):
+    def store_video(self, video_data, patient_name, therapist_name):
+        
+        key = patient_name+'-'+str(uuid.uuid4())
+        # thumbnail = self.extract_thumbnail(video_data)
+        
         # put video and thumbnail in AWS S3 database
         bucket = boto3.resource('s3').Bucket('mcs21fyp')
         bucket.put_object(Key=key, Body=video_data)
-        bucket.put_object(Key=key+'_thumbnail', Body=thumbnail)
-
+        # bucket.put_object(Key=key+'_thumbnail', Body=thumbnail)
+        
         # put metadata in AWS dynamoDB database
         table = boto3.resource('dynamodb').Table('mcs21fyp')
         input = {
             'key': key,
-            'video': video_data,
-            'tags': tags,
+            # 'tags': tags,
             'patientName': patient_name,
             'therapistName': therapist_name,
         }
         table.put_item(Item=input)
+        return None
 
 
     def extract_thumbnail(self, video):
@@ -68,41 +75,45 @@ class VideoStoringService:
         return thumbnail_data
 
 
-
-app = Flask(__name__)
 video_processing_service = VideoProcessingService()
 video_storing_service = VideoStoringService()
 
 
 # controller for feeding video to model and uploading to database
-@app.route('/process_video', methods=['POST'])
+@app.route('/upload_video', methods=['POST'])
 def process_video():
-    data = request.json
-    video_data = data.get('video_data')
-    patient_name = data.get('patient_name')
-    therapist_name = data.get('therapist_name')
-
-    emotion_tags = video_processing_service.process_video(video_data)
-    video_storing_service.store_video(video_data, emotion_tags, patient_name, therapist_name)
+    try:
+        video_data = request.files['video']
+        patient_name = request.form.get('patient_name')
+        therapist_name = request.form.get('therapist_name')
+        
+        # emotion_tags = video_processing_service.process_video(video_data)
+        # video_storing_service.store_video(video_data, emotion_tags, patient_name, therapist_name)
+        video_storing_service.store_video(video_data, patient_name, therapist_name)
+        return jsonify({'message': 'Video uploaded successfully'})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 
     # return jsonify({"emotion_tags": emotion_tags})
 
 
-import requests
+# import requests
 
-class MachineLearningApiClient:
-    def __init__(self):
-        self.ml_api_endpoint = # "http://your_ml_server/predict";
+# class MachineLearningApiClient:
+#     def __init__(self):
+#         self.ml_api_endpoint = # "http://your_ml_server/predict";
 
-    def predict_emotion(self, video_data):
-        response = requests.post(self.ml_api_endpoint, json={"video_data": video_data})
+#     def predict_emotion(self, video_data):
+#         response = requests.post(self.ml_api_endpoint, json={"video_data": video_data})
         
-        if response.status_code == 200:
-            prediction_result = response.json()
-            emotion_tags = prediction_result.get("emotion_tags", "Emotion tags not available")
-            return emotion_tags
-        else:
-            return "Error processing video"
+#         if response.status_code == 200:
+#             prediction_result = response.json()
+#             emotion_tags = prediction_result.get("emotion_tags", "Emotion tags not available")
+#             return emotion_tags
+#         else:
+#             return "Error processing video"
         
 
 # service that returns the video that the user clicks on
