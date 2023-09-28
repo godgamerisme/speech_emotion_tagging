@@ -61,9 +61,6 @@ class VideoStoringService:
         try:
             thumbnail_data = subprocess.check_output(ffmpeg_cmd)
             # print('Thumbnail extracted successfully.')
-        
-            # Now, 'thumbnail_data' contains the thumbnail image data as bytes.
-            # You can store it in a variable or a database.
 
         except subprocess.CalledProcessError as e:
             print(f'Error: {e}')
@@ -141,8 +138,7 @@ get_video_service = GetVideoService()
 # controller for retrieving video based on key provided
 @app.route('/display_video', methods=['POST'])
 def get_video():
-    data = request.json
-    video_key = data.get('video_key')
+    video_key = request.form.get('video_key')
 
     video, metadata = get_video_service.get_video(video_key)
 
@@ -156,21 +152,28 @@ def get_video():
     return jsonify(response_data)
 
 
-# service that gets all videos
+# service that gets a list of all thumbnails with their corresponding video's metadata
 class GetAllVideosService:
     def get_all_videos(self):
         bucket = boto3.resource('s3').Bucket('mcs21fyp')
         table = boto3.resource('dynamodb').Table('mcs21fyp')
         data = []
 
-        while 'LastEvaluatedKey' in response:
-            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-            data.extend(response['Items'])
-
-        # get video from AWS S3 bucket
-        for video in data:
-            video_data = bucket.get_object(Key=video.key).body
-            video[video_data] = video_data
+        for obj in bucket.objects.all():
+            if obj.key.endswith("thumbnail"):
+                key = obj.key
+                thumbnail = bucket.get_object(Key=key).body
+                video_key = key.replace("thumbnail", '')  # remove "thumbnail" from end of key so that it becomes corresponding video's key
+                response = table.get_item(Key={'key': {'S': video_key}})
+                metadata = {
+                    'tags': response.tags,
+                    'patientName': response.patient_name,
+                    'therapistName': response.therapist_name,
+                }
+                data.append({
+                    thumbnail: thumbnail,
+                    metadata: metadata,
+                    })
 
         return data
 
@@ -181,15 +184,9 @@ get_all_videos_service = GetAllVideosService()
 # controller for retrieving all videos
 @app.route('/all_videos', methods=['GET'])
 def get_all_videos():
-    data = request.json
+    all_videos = get_all_videos_service.get_all_videos()
 
-    videos = get_all_videos_service.get_all_videos()
-
-    response_data = {
-        "videos": videos,
-    }
-
-    return jsonify(response_data)
+    return jsonify(all_videos)
 
 
 if __name__ == '__main__':
