@@ -4,6 +4,8 @@ import subprocess
 import tempfile
 from flask_cors import CORS
 import uuid
+import sys
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -21,16 +23,48 @@ class VideoProcessingService:
 
 # service to upload video to S3 and other data to DynamoDB
 class VideoStoringService:
+    def extract_thumbnail(self, video):
+        video_format = video.filename.rsplit('.', 1)[1].lower()
+
+        try:
+            # Create a temporary directory for the video file
+            with tempfile.TemporaryDirectory() as temp_dir:
+                temp_video_path = os.path.join(temp_dir, f"temp_video.{video_format}")
+
+                # Write the file data to the temporary video file
+                with open(temp_video_path, "wb") as temp_video:
+                    file_data = video.read()
+                    temp_video.write(file_data)
+
+                # Run FFmpeg to extract the thumbnail from the temporary video file
+                ffmpeg_cmd = [
+                    'ffmpeg',
+                    '-i', temp_video_path,  # Input video file
+                    '-ss', str(10),  # Seek to the specified time
+                    '-vframes', '1',  # Extract only 1 frame (the thumbnail)
+                    '-f', 'image2pipe',  # Output format
+                    '-'
+                ]
+
+                thumbnail_data = subprocess.check_output(ffmpeg_cmd)
+                print('Thumbnail extracted successfully.', file=sys.stderr)
+
+                return thumbnail_data
+
+        except Exception as e:
+            print(f'Error: {e}', file=sys.stderr)
+            return None
+    
     # def store_video(self, video_data, tags, patient_name, therapist_name):
     def store_video(self, video_data, patient_name, therapist_name):
         
         key = patient_name+'-'+str(uuid.uuid4())
-        # thumbnail = self.extract_thumbnail(video_data)
+        thumbnail = self.extract_thumbnail(video_data)
         
         # put video and thumbnail in AWS S3 database
         bucket = boto3.resource('s3').Bucket('mcs21fyp')
         bucket.put_object(Key=key, Body=video_data)
-        # bucket.put_object(Key=key+'_thumbnail', Body=thumbnail)
+        bucket.put_object(Key=key+'_thumbnail', Body=thumbnail)
         
         # put metadata in AWS dynamoDB database
         table = boto3.resource('dynamodb').Table('mcs21fyp')
@@ -42,34 +76,6 @@ class VideoStoringService:
         }
         table.put_item(Item=input)
         return None
-
-
-    def extract_thumbnail(self, video):
-        with tempfile.NamedTemporaryFile(delete=False, suffix=f".{video['format']}", mode="wb") as temp_video:
-            temp_video.write(video["data"].decode("base64"))
-
-        # Run FFmpeg to extract the thumbnail from the temporary video file
-        ffmpeg_cmd = [
-            'ffmpeg',
-            '-i', temp_video.name,  # Input video file
-            '-ss', str(10),  # Seek to the specified time
-            '-vframes', '1',  # Extract only 1 frame (the thumbnail)
-            '-f', 'image2pipe',  # Output format
-            '-'  # Send the output to stdout
-        ]
-
-        try:
-            thumbnail_data = subprocess.check_output(ffmpeg_cmd)
-            # print('Thumbnail extracted successfully.')
-
-        except subprocess.CalledProcessError as e:
-            print(f'Error: {e}')
-        finally:
-            # Clean up the temporary video file
-            temp_video.close()
-            temp_video.unlink()
-
-        return thumbnail_data
 
 
 video_processing_service = VideoProcessingService()
@@ -160,17 +166,18 @@ class GetAllVideosService:
         data = []
 
         for obj in bucket.objects.all():
-            if obj.key.endswith("thumbnail"):
+            if obj.key.endswith("_thumbnail"):
                 key = obj.key
                 thumbnail = bucket.get_object(Key=key).body
-                video_key = key.replace("thumbnail", '')  # remove "thumbnail" from end of key so that it becomes corresponding video's key
+                video_key = key.replace("_thumbnail", '')  # remove "thumbnail" from end of key so that it becomes corresponding video's key
                 response = table.get_item(Key={'key': {'S': video_key}})
                 metadata = {
-                    'tags': response.tags,
+                    # 'tags': response.tags,
                     'patientName': response.patient_name,
                     'therapistName': response.therapist_name,
                 }
                 data.append({
+                    video_key: video_key,
                     thumbnail: thumbnail,
                     metadata: metadata,
                     })

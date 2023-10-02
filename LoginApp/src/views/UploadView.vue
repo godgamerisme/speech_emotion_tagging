@@ -1,6 +1,6 @@
 <template>
     <div>
-      <input type="file" @change="handleFileUpload" accept=".mp4,.pdf"/>
+      <input type="file" @change="handleFileUpload" accept=".mp4,.pdf"/>  <!--rmb change this back-->>
       <input type="text" v-model="patientName" placeholder="Enter patient name" />
       <input type="text" v-model="therapistName" placeholder="Enter therapist name" />
       <button @click="uploadVideo">Upload Video</button>
