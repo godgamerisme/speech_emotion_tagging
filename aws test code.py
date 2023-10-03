@@ -1,4 +1,5 @@
 import boto3
+import requests
 from flask import Flask, request, jsonify
 import subprocess
 import tempfile
@@ -59,11 +60,14 @@ class VideoStoringService:
     def store_video(self, video_data, patient_name, therapist_name):
         
         key = patient_name+'-'+str(uuid.uuid4())
-        thumbnail = self.extract_thumbnail(video_data)
+        
         
         # put video and thumbnail in AWS S3 database
         bucket = boto3.resource('s3').Bucket('mcs21fyp')
         bucket.put_object(Key=key, Body=video_data)
+        video_data.seek(0)  # Reset the file pointer to the beginning after reading
+
+        thumbnail = self.extract_thumbnail(video_data)
         bucket.put_object(Key=key+'_thumbnail', Body=thumbnail)
         
         # put metadata in AWS dynamoDB database
@@ -82,6 +86,11 @@ video_processing_service = VideoProcessingService()
 video_storing_service = VideoStoringService()
 
 
+# def use_model(video):
+#     # preprocessing + call model here
+#     return emotion_tags
+
+
 # controller for feeding video to model and uploading to database
 @app.route('/upload_video', methods=['POST'])
 def process_video():
@@ -90,8 +99,8 @@ def process_video():
         patient_name = request.form.get('patient_name')
         therapist_name = request.form.get('therapist_name')
         
-        # emotion_tags = video_processing_service.process_video(video_data)
-        # video_storing_service.store_video(video_data, emotion_tags, patient_name, therapist_name)
+        # emotion_tags = use_model(video_data)
+
         video_storing_service.store_video(video_data, patient_name, therapist_name)
         return jsonify({'message': 'Video uploaded successfully'})
     
