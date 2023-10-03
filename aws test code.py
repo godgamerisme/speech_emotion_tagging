@@ -61,7 +61,6 @@ class VideoStoringService:
         
         key = patient_name+'-'+str(uuid.uuid4())
         
-        
         # put video and thumbnail in AWS S3 database
         bucket = boto3.resource('s3').Bucket('mcs21fyp')
         bucket.put_object(Key=key, Body=video_data)
