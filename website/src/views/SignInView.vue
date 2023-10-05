@@ -31,7 +31,7 @@
   
   <script setup>
   import { ref } from "vue";
-  import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+  import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
   import { useRouter } from "vue-router";
   
   const email = ref("");
@@ -40,9 +40,11 @@
   const errMsg = ref();
   
   const signin = () => {
-    signInWithEmailAndPassword(getAuth(), email.value, password.value)
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email.value, password.value)
       .then((data) => {
         console.log("Successfully signed in!");
+        console.log(auth.currentUser)
         router.push("/videos");
       })
       .catch((error) => {
@@ -64,11 +66,20 @@
       });
   };
   
-  const google = () => {
-    // Implement Google Sign-In logic here
-  };
-  </script>
-  
+const google = () => {
+  const provider = new GoogleAuthProvider();
+  signInWithPopup(getAuth(), provider)
+    .then((result) => {
+      console.log(result.user);
+      router.push("/");
+    })
+    .catch((error) => {
+      console.log(error.code);
+      alert(error.message);
+    });
+};
+</script>
+
   <style scoped>
   .sign-in-container {
     max-width: 400px;
