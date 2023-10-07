@@ -7,6 +7,8 @@ from flask_cors import CORS
 import uuid
 import sys
 import os
+from run_model import EmotionPredictor
+from preprocessing import PreprocessVideo
 
 app = Flask(__name__)
 CORS(app)
@@ -94,14 +96,29 @@ video_storing_service = VideoStoringService()
 @app.route('/upload_video', methods=['POST'])
 def process_video():
     try:
-        video_data = request.files['video']
+        video_file  = request.files['video']
         patient_name = request.form.get('patient_name')
         therapist_name = request.form.get('therapist_name')
         
         # emotion_tags = use_model(video_data)
 
-        video_storing_service.store_video(video_data, patient_name, therapist_name)
-        return jsonify({'message': 'Video uploaded successfully'})
+        filename = video_file.filename
+        destination_path = './video/' + filename
+        video_file.save(destination_path)
+
+        video_preprocessor = PreprocessVideo(video_path=destination_path)
+        preprocessed_audio_array,corrupted_audio_index = video_preprocessor.get_preprocessed_audio_array()
+        audio_duration = video_preprocessor.get_duration()
+        emotion_predictor = EmotionPredictor()
+        emotion_tags = emotion_predictor.predict_emotions(preprocessed_audio_array,audio_duration,corrupted_audio_index)
+        video_storing_service.store_video(video_file, patient_name, therapist_name)
+
+        #remove video from local folder
+        # os.remove(destination_path)
+
+        response = {'message': 'Video uploaded successfully'}
+        merged_response = {**response, **emotion_tags}
+        return jsonify(merged_response)
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
