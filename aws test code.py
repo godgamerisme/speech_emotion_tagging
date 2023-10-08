@@ -150,39 +150,44 @@ def process_video():
 class GetVideoService:  
     def get_video(self, video_key):
         # get video from AWS S3 bucket
-        bucket = boto3.resource('s3').Bucket('mcs21fyp')
-        video = bucket.get_object(Key=video_key).body
+        s3 = boto3.client('s3')
+        # bucket = boto3.resource('s3').Bucket('mcs21fyp')
+        # video = bucket.get_object(Key=video_key).body
 
         # get metadata from AWS dynamoDB database
         table = boto3.resource('dynamodb').Table('mcs21fyp')
-        response = table.get_item(Key={'key': {'S': video_key}})
+        response = table.get_item(Key={'key': video_key})
+        print(response)
+
+        url = s3.generate_presigned_url(
+        'get_object',
+        Params={'Bucket': 'mcs21fyp', 'Key': video_key},
+        ExpiresIn=60  # URL will expire in 60 seconds
+        )
 
         metadata = {
-            'tags': response.tags,
-            'patientName': response.patient_name,
-            'therapistName': response.therapist_name,
+            'url': url,
+            # 'tags': response.tags,
+            'patientName': response['Item']['patientName'],
+            'therapistName': response['Item']['therapistName'],
         }
 
-        return video, metadata
+        return metadata
 
 
 get_video_service = GetVideoService()
 
 # controller for retrieving video based on key provided
-@app.route('/display_video', methods=['POST'])
+@app.route('/get_video', methods=['POST'])
 def get_video():
+
     video_key = request.form.get('video_key')
 
-    video, metadata = get_video_service.get_video(video_key)
+    metadata = get_video_service.get_video(video_key)
 
-    response_data = {
-        'video': video,
-        'tags': metadata.tags,
-        'patientName': metadata.patient_name,
-        'therapistName': metadata.therapist_name,    
-    }
+    
 
-    return jsonify(response_data)
+    return jsonify(metadata)
 
 
 # service that gets a list of all thumbnails with their corresponding video's metadata
