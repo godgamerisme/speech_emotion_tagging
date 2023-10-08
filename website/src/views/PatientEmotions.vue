@@ -36,12 +36,4 @@ export default {
 </script>
 
 <style scoped>
-.patient-emotions {
-  width: 30%; /* 30% of the screen width */
-  float: right;
-  background-color: #f0f0f0;
-  margin-top: 20px;
-  font-size: 18px;
-  cursor: pointer; /* Change cursor to pointer for clickable elements */
-}
 </style>

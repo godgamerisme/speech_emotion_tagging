@@ -21,12 +21,5 @@
   </script>
   
   <style scoped>
-  .patient-details {
-    width: 30%; /* 33% of the screen width */
-    float: right;
-    background-color: #f0f0f0;
-    margin-top: 20px;
-    font-size: 18px;
-  }
   </style>
   
