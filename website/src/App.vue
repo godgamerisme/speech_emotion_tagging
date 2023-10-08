@@ -41,10 +41,6 @@ const handleSignOut = () => {
   margin-top: 60px;
 }
 
-nav {
-  font-size: 25px; /* Adjust the font size as needed */
-}
-
 router-link {
   text-decoration: none; /* Remove underline from router-links */
   color: #333; /* Change the color as needed */
