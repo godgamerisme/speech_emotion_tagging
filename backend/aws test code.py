@@ -162,7 +162,7 @@ class GetVideoService:
         url = s3.generate_presigned_url(
         'get_object',
         Params={'Bucket': 'mcs21fyp', 'Key': video_key},
-        ExpiresIn=1000  # URL will expire in 1000 seconds
+        ExpiresIn=10000  # URL will expire in 10000 seconds
         )
 
         metadata = {
@@ -170,6 +170,7 @@ class GetVideoService:
             # 'tags': response.tags,
             'patientName': response['Item']['patientName'],
             'therapistName': response['Item']['therapistName'],
+            #emotion_tags: emotion_tags
         }
 
         return metadata
