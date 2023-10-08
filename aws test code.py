@@ -7,21 +7,11 @@ from flask_cors import CORS
 import uuid
 import sys
 import os
-from run_model import EmotionPredictor
-from preprocessing import PreprocessVideo
+from backend.run_model import EmotionPredictor
+from backend.preprocessing import PreprocessVideo
 
 app = Flask(__name__)
 CORS(app)
-
-
-class VideoProcessingService:
-    def __init__(self):
-        pass
-        # self.ml_client = MachineLearningApiClient()
-
-    def process_video(self, video_data):
-        emotion_tags = self.ml_client.predict_emotion(video_data)
-        return emotion_tags
     
 
 # service to upload video to S3 and other data to DynamoDB
@@ -83,13 +73,7 @@ class VideoStoringService:
         return None
 
 
-video_processing_service = VideoProcessingService()
 video_storing_service = VideoStoringService()
-
-
-# def use_model(video):
-#     # preprocessing + call model here
-#     return emotion_tags
 
 
 # controller for feeding video to model and uploading to database
@@ -124,27 +108,7 @@ def process_video():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
 
-    # return jsonify({"emotion_tags": emotion_tags})
-
-
-# import requests
-
-# class MachineLearningApiClient:
-#     def __init__(self):
-#         self.ml_api_endpoint = # "http://your_ml_server/predict";
-
-#     def predict_emotion(self, video_data):
-#         response = requests.post(self.ml_api_endpoint, json={"video_data": video_data})
-        
-#         if response.status_code == 200:
-#             prediction_result = response.json()
-#             emotion_tags = prediction_result.get("emotion_tags", "Emotion tags not available")
-#             return emotion_tags
-#         else:
-#             return "Error processing video"
-        
 
 # service that returns the video that the user clicks on
 class GetVideoService:  
@@ -194,7 +158,7 @@ class GetAllVideosService:
         thumbnails = [obj for obj in s3_client.list_objects(Bucket='mcs21fyp')['Contents'] if obj['Key'].endswith("_thumbnail")]
 
         table = boto3.resource('dynamodb').Table('mcs21fyp')
-        data = [] 
+        data = []
 
         for thumbnail in thumbnails:
             key = thumbnail['Key']
@@ -214,7 +178,6 @@ class GetAllVideosService:
                 })
 
         return data
-
 
 get_all_videos_service = GetAllVideosService()
 
