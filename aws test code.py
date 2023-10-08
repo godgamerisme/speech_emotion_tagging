@@ -188,26 +188,30 @@ def get_video():
 # service that gets a list of all thumbnails with their corresponding video's metadata
 class GetAllVideosService:
     def get_all_videos(self):
-        bucket = boto3.resource('s3').Bucket('mcs21fyp')
+        s3_client = boto3.client('s3')  # Create an S3 client
+
+        # List objects in the bucket and filter for thumbnails
+        thumbnails = [obj for obj in s3_client.list_objects(Bucket='mcs21fyp')['Contents'] if obj['Key'].endswith("_thumbnail")]
+
         table = boto3.resource('dynamodb').Table('mcs21fyp')
         data = []
 
-        for obj in bucket.objects.all():
-            if obj.key.endswith("_thumbnail"):
-                key = obj.key
-                thumbnail = bucket.get_object(Key=key).body
-                video_key = key.replace("_thumbnail", '')  # remove "thumbnail" from end of key so that it becomes corresponding video's key
-                response = table.get_item(Key={'key': {'S': video_key}})
+        for thumbnail in thumbnails:
+            key = thumbnail['Key']
+            video_key = key.replace("_thumbnail", '')  # remove "thumbnail" from end of key so that it becomes corresponding video's key
+            response = table.get_item(Key={'key': video_key})
+            item = response.get('Item')  # Get the DynamoDB item from the response
+            if item:
                 metadata = {
-                    # 'tags': response.tags,
-                    'patientName': response.patient_name,
-                    'therapistName': response.therapist_name,
+                    # 'tags': item.get('tags'),  # You can access other attributes similarly
+                    'patientName': item.get('patientName'),
+                    'therapistName': item.get('therapistName'),
                 }
                 data.append({
-                    video_key: video_key,
-                    thumbnail: thumbnail,
-                    metadata: metadata,
-                    })
+                    'video_key': video_key,
+                    'thumbnail_key': key,
+                    'metadata': metadata,
+                })
 
         return data
 
