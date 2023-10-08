@@ -1,11 +1,19 @@
 <template>
   <div class="patient-emotions">
-    <h2>Patient Emotions</h2>
+    <h3>Patient Emotions</h3>
     <ul>
-      <li v-for="(emotion, index) in emotions" :key="index" @click="navigateToTime(emotion.start, emotion.end)">
-        <div>
-          <span>{{ emotion.emotion &nbsp;}} </span>
-          <span>{{ (emotion.start) }} - {{ (emotion.end) }}</span>
+      <li
+        v-for="(emotion, index) in emotions"
+        :key="index"
+        @click="navigateToTime(emotion.start, emotion.end)"
+        class="d-flex flex-row mt-3 align-items-center gap-3"
+      >
+        <img class="w-20" :src="emotion.src" :alt="emotion.emotion">
+        <div class="d-flex flex-column">
+          <span
+            ><b>{{ emotion.emotion }}</b></span
+          >
+          <span>{{ emotion.start }} - {{ emotion.end }}</span>
         </div>
       </li>
     </ul>
@@ -36,12 +44,9 @@ export default {
 </script>
 
 <style scoped>
-.patient-emotions {
-  width: 30%; /* 30% of the screen width */
-  float: right;
-  background-color: #f0f0f0;
-  margin-top: 20px;
-  font-size: 18px;
-  cursor: pointer; /* Change cursor to pointer for clickable elements */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 </style>

@@ -20,9 +20,9 @@ export default {
 </script>
 
 <style scoped>
-.video-player {
-  width: 66%; /* 66% of the screen width */
-  float: left;
-  margin-top: 20px;
+video {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0.4em;
 }
 </style>
