@@ -1,4 +1,4 @@
-from preprocessing import PreprocessVideo
+from backend.preprocessing import PreprocessVideo
 from keras.models import model_from_json
 import pandas as pd
 import datetime

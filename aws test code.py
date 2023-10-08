@@ -9,6 +9,7 @@ import sys
 import os
 from backend.run_model import EmotionPredictor
 from backend.preprocessing import PreprocessVideo
+from datetime import date
 
 app = Flask(__name__)
 CORS(app)
@@ -49,7 +50,7 @@ class VideoStoringService:
             return None
     
     # def store_video(self, video_data, tags, patient_name, therapist_name):
-    def store_video(self, video_data, patient_name, therapist_name):
+    def store_video(self, video_data, patient_name, therapist_name, emotion_tags):
         
         key = patient_name+'-'+str(uuid.uuid4())
         
@@ -62,12 +63,14 @@ class VideoStoringService:
         bucket.put_object(Key=key+'_thumbnail', Body=thumbnail)
         
         # put metadata in AWS dynamoDB database
+        date_str = date.today().strftime("%m/%d/%Y")
         table = boto3.resource('dynamodb').Table('mcs21fyp')
         input = {
             'key': key,
-            # 'tags': tags,
             'patientName': patient_name,
             'therapistName': therapist_name,
+            'emotionTags': emotion_tags,
+            'date': date_str,
         }
         table.put_item(Item=input)
         return None
@@ -87,7 +90,7 @@ def process_video():
         # emotion_tags = use_model(video_data)
 
         filename = video_file.filename
-        destination_path = './video/' + filename
+        destination_path = './backend/video/' + filename
         video_file.save(destination_path)
 
         video_preprocessor = PreprocessVideo(video_path=destination_path)
@@ -96,7 +99,7 @@ def process_video():
         emotion_predictor = EmotionPredictor()
         emotion_tags = emotion_predictor.predict_emotions(preprocessed_audio_array,audio_duration,corrupted_audio_index)
         print("here")
-        video_storing_service.store_video(video_file, patient_name, therapist_name)
+        video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags)
         print("store success")
 
         #remove video from local folder
