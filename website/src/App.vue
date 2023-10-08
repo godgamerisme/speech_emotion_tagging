@@ -30,35 +30,3 @@ const handleSignOut = () => {
 };
 
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-
-router-link {
-  text-decoration: none; /* Remove underline from router-links */
-  color: #333; /* Change the color as needed */
-  margin: 0 10px; /* Add margin to separate the links */
-}
-
-.btn {
-  background-color: red;
-  color: #fff;
-  padding: 5px 10px; /* Adjust padding to make it smaller */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: darkred;
-}
-
-</style>
