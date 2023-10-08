@@ -111,14 +111,16 @@ def process_video():
         audio_duration = video_preprocessor.get_duration()
         emotion_predictor = EmotionPredictor()
         emotion_tags = emotion_predictor.predict_emotions(preprocessed_audio_array,audio_duration,corrupted_audio_index)
+        print("here")
         video_storing_service.store_video(video_file, patient_name, therapist_name)
+        print("store success")
 
         #remove video from local folder
         # os.remove(destination_path)
 
-        response = {'message': 'Video uploaded successfully'}
-        merged_response = {**response, **emotion_tags}
-        return jsonify(merged_response)
+        response = {'message': 'Video uploaded successfully',
+                    'emotion_tags': emotion_tags}
+        return jsonify(response)
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
