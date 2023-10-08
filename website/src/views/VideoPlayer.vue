@@ -24,13 +24,12 @@
     },
     data() {
       return {
-        videoSrc: 'path/to/your/video.mp4',
         patientName: 'John Doe',
         patientAge: 30,
         appointmentDate: '2023-10-02',
         doctorName: 'Dr. Smith',
         emotions: [
-          { emotion: 'Happy', start: '00:00', end: '00:50' },
+          { emotion: 'Happy ', start: '00:00', end: '00:50' },
           // Add more emotion objects with timestamps as needed
         ],
       };

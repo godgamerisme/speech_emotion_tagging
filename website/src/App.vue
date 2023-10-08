@@ -4,7 +4,6 @@
     <router-link to="/register"> Register</router-link> |
     <router-link to="/sign-in"> Sign In</router-link> |
     <router-link to="/videos"> All Videos</router-link> | 
-    <router-link to="/video-player"> Video Player</router-link> | 
     <router-link to="/upload"> Upload Page</router-link> | 
     <button class ="btn" @click="handleSignOut" v-if="isLoggedIn"> Sign Out</button>
   </nav>

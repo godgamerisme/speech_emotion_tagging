@@ -1,18 +1,20 @@
 <template>
-    <div class="video-player">
-      <video ref="videoPlayer" controls>
-        <source :src="videoSrc" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-    </div>
-  </template>
+  <div class="video-player">
+    <video ref="videoPlayer" controls autoplay>
+      <source :src="getVideoUrl()">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+</template>
   
   <script>
   export default {
-    data() {
-      return {
-        videoSrc: require('@/assets/therapy.mp4'), // Use a relative path to the video file
-      };
+    methods: {
+      getVideoUrl() {
+        // Construct the URL for the video based on the videoKey
+        const bucketUrl = 'https://mcs21fyp.s3.amazonaws.com/';
+        return `${bucketUrl}${this.$route.params.videoKey}`;
+      },
     },
   };
   </script>

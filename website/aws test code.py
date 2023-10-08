@@ -61,6 +61,7 @@ class VideoStoringService:
         
         key = patient_name+'-'+str(uuid.uuid4())
         
+        
         # put video and thumbnail in AWS S3 database
         bucket = boto3.resource('s3').Bucket('mcs21fyp')
         bucket.put_object(Key=key, Body=video_data)
@@ -84,12 +85,6 @@ class VideoStoringService:
 video_processing_service = VideoProcessingService()
 video_storing_service = VideoStoringService()
 
-
-# def use_model(video):
-#     # preprocessing + call model here
-#     return emotion_tags
-
-
 # controller for feeding video to model and uploading to database
 @app.route('/upload_video', methods=['POST'])
 def process_video():
@@ -105,27 +100,6 @@ def process_video():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
-
-    # return jsonify({"emotion_tags": emotion_tags})
-
-
-# import requests
-
-# class MachineLearningApiClient:
-#     def __init__(self):
-#         self.ml_api_endpoint = # "http://your_ml_server/predict";
-
-#     def predict_emotion(self, video_data):
-#         response = requests.post(self.ml_api_endpoint, json={"video_data": video_data})
-        
-#         if response.status_code == 200:
-#             prediction_result = response.json()
-#             emotion_tags = prediction_result.get("emotion_tags", "Emotion tags not available")
-#             return emotion_tags
-#         else:
-#             return "Error processing video"
-        
 
 # service that returns the video that the user clicks on
 class GetVideoService:  
@@ -169,26 +143,30 @@ def get_video():
 # service that gets a list of all thumbnails with their corresponding video's metadata
 class GetAllVideosService:
     def get_all_videos(self):
-        bucket = boto3.resource('s3').Bucket('mcs21fyp')
+        s3_client = boto3.client('s3')  # Create an S3 client
+
+        # List objects in the bucket and filter for thumbnails
+        thumbnails = [obj for obj in s3_client.list_objects(Bucket='mcs21fyp')['Contents'] if obj['Key'].endswith("_thumbnail")]
+
         table = boto3.resource('dynamodb').Table('mcs21fyp')
         data = []
 
-        for obj in bucket.objects.all():
-            if obj.key.endswith("_thumbnail"):
-                key = obj.key
-                thumbnail = bucket.get_object(Key=key).body
-                video_key = key.replace("_thumbnail", '')  # remove "thumbnail" from end of key so that it becomes corresponding video's key
-                response = table.get_item(Key={'key': {'S': video_key}})
+        for thumbnail in thumbnails:
+            key = thumbnail['Key']
+            video_key = key.replace("_thumbnail", '')  # remove "thumbnail" from end of key so that it becomes corresponding video's key
+            response = table.get_item(Key={'key': video_key})
+            item = response.get('Item')  # Get the DynamoDB item from the response
+            if item:
                 metadata = {
-                    # 'tags': response.tags,
-                    'patientName': response.patient_name,
-                    'therapistName': response.therapist_name,
+                    # 'tags': item.get('tags'),  # You can access other attributes similarly
+                    'patientName': item.get('patientName'),
+                    'therapistName': item.get('therapistName'),
                 }
                 data.append({
-                    video_key: video_key,
-                    thumbnail: thumbnail,
-                    metadata: metadata,
-                    })
+                    'video_key': video_key,
+                    'thumbnail_key': key,
+                    'metadata': metadata,
+                })
 
         return data
 
@@ -200,6 +178,7 @@ get_all_videos_service = GetAllVideosService()
 @app.route('/all_videos', methods=['GET'])
 def get_all_videos():
     all_videos = get_all_videos_service.get_all_videos()
+    print(all_videos)
 
     return jsonify(all_videos)
 
