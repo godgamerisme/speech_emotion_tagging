@@ -15,7 +15,7 @@
     </div>
     <div class="d-flex flex-column mt-3">
       <span><b>Appointment Date</b></span>
-      <span>{{ session.date }}</span>
+      <span>{{ session.date.toLocaleDateString("en-UK") }}</span>
     </div>
     <div class="d-flex flex-column mt-3">
       <span><b>Doctor</b></span>
@@ -31,7 +31,7 @@ import { Session } from '../models/Session';
 export default defineComponent({
   // Add props for patient details
   props: {
-    session: Object // as PropType<Session>
+    session: Object as PropType<Session>
   },
 });
 </script>

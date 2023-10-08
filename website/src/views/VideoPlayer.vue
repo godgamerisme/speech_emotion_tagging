@@ -17,7 +17,6 @@
 import VideoPlayer from "./PatientVideo.vue";
 import PatientDetails from "./PatientDetails.vue";
 import PatientEmotions from "./PatientEmotions.vue";
-import { Session } from "../models/Session";
 
 export default {
   components: {
@@ -37,10 +36,6 @@ export default {
         }
       },
       videoSrc: "path/to/your/video.mp4",
-      // patientName: "John Doe",
-      // patientAge: 30,
-      // appointmentDate: "2023-10-02",
-      // doctorName: "Dr. Smith",
       emotions: [
         { emotion: "Happy", src: "/src/assets/icons/emotions/happy.png", start: "00:00", end: "01:32" },
         { emotion: "Sad", src: "/src/assets/icons/emotions/sad.png", start: "01:32", end: "04:01" },
