@@ -11,10 +11,14 @@
 export default {
   data() {
     return {
-      videoSrc: require('@/assets/therapy.mp4'), // Use a relative path to the video file
+      // videoSrc: require('@/assets/therapy.mp4'), // Use a relative path to the video file
     };
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+video {
+  width: 100%;
+}
+</style>

@@ -1,13 +1,18 @@
 <template>
-  <div>
-    <video-player :videoSrc="videoSrc" />
-    <patient-details
-      :patientName="patientName"
-      :patientAge="patientAge"
-      :appointmentDate="appointmentDate"
-      :doctorName="doctorName"
-    />
-    <patient-emotions :emotions="emotions" />
+  <div class="container mt-5">
+    <div class="d-flex gap-3">
+      <video-player class="flex-grow-1" :videoSrc="videoSrc" />
+      <div class="d-flex flex-column gap-3">
+        <patient-details
+          class="card p-4"
+          :patientName="patientName"
+          :patientAge="patientAge"
+          :appointmentDate="appointmentDate"
+          :doctorName="doctorName"
+        />
+        <patient-emotions class="card p-4" :emotions="emotions" />
+      </div>
+    </div>
   </div>
 </template>
 
