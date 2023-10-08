@@ -6,9 +6,9 @@
         v-for="(emotion, index) in emotions"
         :key="index"
         @click="navigateToTime(emotion.start, emotion.end)"
-        class="d-flex flex-row mt-3"
+        class="d-flex flex-row mt-3 align-items-center gap-3"
       >
-        <img class="w-25" :src="emotion.src" :alt="emotion.emotion">
+        <img class="w-20" :src="emotion.src" :alt="emotion.emotion">
         <div class="d-flex flex-column">
           <span
             ><b>{{ emotion.emotion }}</b></span
