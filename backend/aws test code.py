@@ -59,7 +59,7 @@ class VideoStoringService:
             return None
     
     # def store_video(self, video_data, tags, patient_name, therapist_name):
-    def store_video(self, video_data, patient_name, therapist_name):
+    def store_video(self, video_data, patient_name, therapist_name, emotion_tags):
         
         key = patient_name+'-'+str(uuid.uuid4())
         
@@ -75,9 +75,9 @@ class VideoStoringService:
         table = boto3.resource('dynamodb').Table('mcs21fyp')
         input = {
             'key': key,
-            # 'tags': tags,
             'patientName': patient_name,
             'therapistName': therapist_name,
+            'emotionTags': emotion_tags,
         }
         table.put_item(Item=input)
         return None
@@ -112,7 +112,7 @@ def process_video():
         emotion_predictor = EmotionPredictor()
         emotion_tags = emotion_predictor.predict_emotions(preprocessed_audio_array,audio_duration,corrupted_audio_index)
         print("here")
-        video_storing_service.store_video(video_file, patient_name, therapist_name)
+        video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags)
         print("store success")
 
         #remove video from local folder
@@ -125,26 +125,6 @@ def process_video():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
-
-    # return jsonify({"emotion_tags": emotion_tags})
-
-
-# import requests
-
-# class MachineLearningApiClient:
-#     def __init__(self):
-#         self.ml_api_endpoint = # "http://your_ml_server/predict";
-
-#     def predict_emotion(self, video_data):
-#         response = requests.post(self.ml_api_endpoint, json={"video_data": video_data})
-        
-#         if response.status_code == 200:
-#             prediction_result = response.json()
-#             emotion_tags = prediction_result.get("emotion_tags", "Emotion tags not available")
-#             return emotion_tags
-#         else:
-#             return "Error processing video"
-        
 
 # service that returns the video that the user clicks on
 class GetVideoService:  
