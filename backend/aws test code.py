@@ -9,6 +9,7 @@ import sys
 import os
 from run_model import EmotionPredictor
 from preprocessing import PreprocessVideo
+from werkzeug.datastructures import FileStorage
 
 app = Flask(__name__)
 CORS(app)
@@ -113,7 +114,14 @@ def process_video():
         emotion_predictor = EmotionPredictor()
         emotion_tags = emotion_predictor.predict_emotions(preprocessed_audio_array,audio_duration,corrupted_audio_index)
         print("here")
-        video_file.seek(0)
+        # video_file.seek(0)
+        #check if its an avi file
+        if is_avi_file(filename):
+            #use ffmpeg to convert to mp4
+            print("converting to mp4")
+            subprocess.call(['ffmpeg', '-i', destination_path, destination_path.replace(".avi", ".mp4")])
+            destination_path = destination_path.replace(".avi", ".mp4")
+            video_file = FileStorage(stream=open(destination_path, "rb"),filename=filename.replace(".avi", ".mp4"))
         video_storing_service.store_video(video_file, patient_name, therapist_name)
         print("store success")
         video_preprocessor.clear_all_directories()
@@ -127,6 +135,11 @@ def process_video():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+def is_avi_file(filename):
+    # Check the file extension
+    _, file_extension = os.path.splitext(filename)
+    return file_extension.lower() == '.avi'
     
 
     # return jsonify({"emotion_tags": emotion_tags})
