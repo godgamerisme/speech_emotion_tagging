@@ -9,18 +9,18 @@ class EmotionPredictor:
         self.model = self.load_model()
 
     def load_model(self):
-        model_file = open('./model/Audio_2DCNN_4L_R2.json', 'r')
+        model_file = open('./backend/model/Audio_2DCNN_4L_R2.json', 'r')
         model_json = model_file.read()
         model_file.close()
         model = model_from_json(model_json)
-        model.load_weights('./model/Audio_2DCNN_4L_R2.h5')
+        model.load_weights('./backend/model/Audio_2DCNN_4L_R2.h5')
         return model
     
     def predict_emotions(self,preprocessed_audio_array,audio_duration,corrupted_audio_index=None):
         # Replace this with your actual emotion prediction logic
         emotion_tags = self.model.predict(preprocessed_audio_array,batch_size=16,verbose=1)
         emotion_tags = emotion_tags.argmax(axis=1)
-        label_mapping_df = pd.read_csv('./model/label_mapping.csv')
+        label_mapping_df = pd.read_csv('./backend/model/label_mapping.csv')
         label_mapping_dict = dict(zip(label_mapping_df['EncodedLabel'], label_mapping_df['OriginalLabel']))
         emotion_tags = [label_mapping_dict[x] for x in emotion_tags]
         if corrupted_audio_index:
