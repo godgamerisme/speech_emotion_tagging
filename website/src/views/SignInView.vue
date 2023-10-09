@@ -1,42 +1,65 @@
 <template>
-  <div class="sign-in-container">
-    <h1>Sign In</h1>
-    <form @submit.prevent="signin">
-      <div class="input-group" style="margin-top: 170px">
-        <!-- Add margin-top -->
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="text"
-          placeholder="Enter your email"
-          v-model="email"
-        />
-      </div>
-      <div class="input-group">
-        <label for="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Enter your password"
-          v-model="password"
-        />
-      </div>
-      <p v-if="errMsg">{{ errMsg }}</p>
-      <button type="submit" class="submit-button">Submit</button>
-    </form>
-    <div class="button-spacing">
-      <button @click="google" class="google-button">Sign In With Google</button>
-    </div>
-  </div>
+  <section class="vh-100">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card shadow-2-strong" style="border-radius: 1rem">
+            <div class="card-body p-5 text-center">
+              <div class="d-flex gap-2 justify-content-center">
+                <img
+                  src="@/assets/heartballoon.png"
+                  alt="HeartBalloon"
+                  class="heartballoon"
+                />
+                <h2 class="mb-5">MindScape</h2>
+              </div>
 
-  <div class="container text-center">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4">
-      <div class="col">Column</div>
-      <div class="col">Column</div>
-      <div class="col">Column</div>
-      <div class="col">Column</div>
+              <div class="form-outline mb-4">
+                <input
+                  type="email"
+                  id="typeEmailX-2"
+                  class="form-control form-control-lg"
+                  placeholder="Enter your email"
+                  v-model="email"
+                />
+                <label class="form-label" for="typeEmailX-2">Email</label>
+              </div>
+
+              <div class="form-outline mb-4">
+                <input
+                  type="password"
+                  id="typePasswordX-2"
+                  class="form-control form-control-lg"
+                  placeholder="Enter your password"
+                  v-model="password"
+                />
+                <label class="form-label" for="typePasswordX-2">Password</label>
+              </div>
+
+              <div class="d-grid gap-2">
+                <button
+                  class="btn btn-primary btn-lg btn-block"
+                  type="submit"
+                  @click="signin"
+                >
+                  Log in
+                </button>
+                <hr class="my-4" />
+
+                <button
+                  class="btn btn-lg btn-block btn-secondary"
+                  type="submit"
+                  @click="google"
+                >
+                  <i class="bi bi-google"></i> Sign in with google
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -96,57 +119,8 @@ const google = () => {
 </script>
 
 <style scoped>
-.sign-in-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  text-align: center;
-}
-
-h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.input-group {
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-  text-align: left;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.submit-button {
-  background-color: red;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.google-button {
-  background-color: #4285f4;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.button-spacing {
-  margin-top: 20px; /* Add spacing between buttons */
+.heartballoon {
+  width: 50px;
+  height: 50%;
 }
 </style>
