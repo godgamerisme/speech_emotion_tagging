@@ -1,10 +1,27 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
+const authGuard = async (to, from, next) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
+  if (requiresAuth && !(await getCurrentUser())) {
+    // Redirect to login if authentication is required but the user is not logged in
+    next("/");
+  } else {
+    // Continue with the navigation
+    next();
+  }
+};
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/home", component: () => import("../views/HomeView.vue") },
+    {
+      path: "/home",
+      component: () => import("../views/HomeView.vue"),
+      meta: { requiresAuth: true },
+      beforeEnter: authGuard,
+    },
     { path: "/register", component: () => import("../views/RegisterView.vue") },
     { path: "/", component: () => import("../views/SignInView.vue") },
     {
@@ -17,8 +34,15 @@ const router = createRouter({
     {
       path: "/video-player",
       component: () => import("../views/VideoPlayer.vue"),
+      meta: { requiresAuth: true },
+      beforeEnter: authGuard,
     },
-    { path: "/upload", component: () => import("../views/UploadView.vue") },
+    {
+      path: "/upload",
+      component: () => import("../views/UploadView.vue"),
+      meta: { requiresAuth: true },
+      beforeEnter: authGuard,
+    },
   ],
 });
 
@@ -35,17 +59,6 @@ const getCurrentUser = () => {
   });
 };
 
-router.beforeEach(async (to, from, next) => {
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (await getCurrentUser) {
-      next();
-    } else {
-      alert("you do not have access!");
-      next("/");
-    }
-  } else {
-    next();
-  }
-});
+router.beforeEach(authGuard);
 
 export default router;
