@@ -1,7 +1,10 @@
 <template>
   <div class="patient-emotions">
     <h3>Patient Emotions</h3>
-    <div v-for="(emotionType, emotionsOfType) in emotionsGrouped" :key="emotionType">
+    <div
+      v-for="(emotionType, emotionsOfType) in emotionsGrouped"
+      :key="emotionType"
+    >
       <h3 @click="playAll(emotionType)">{{ emotionsOfType }}</h3>
       <ul>
         <li
@@ -10,13 +13,13 @@
           @click="seekToEmotion(emotion)"
           class="d-flex flex-row mt-3 align-items-center gap-3"
         >
-        <!-- <img class="w-20" :src="emotion.src" :alt="emotion.emotion"> -->
-        <div class="d-flex flex-column">
-          <span
-            ><b>{{ emotion.emotion }}</b></span
-          >
-          <span>{{ emotion.begin_time }} - {{ emotion.end_time }}</span>
-        </div>
+          <!-- <img class="w-20" :src="emotion.src" :alt="emotion.emotion"> -->
+          <div class="d-flex flex-column">
+            <span
+              ><b>{{ emotion.emotion }}</b></span
+            >
+            <span>{{ emotion.begin_time }} - {{ emotion.end_time }}</span>
+          </div>
         </li>
       </ul>
     </div>
@@ -65,7 +68,7 @@ export default {
     },
     convertTimeToSeconds(time) {
       // Convert time in the format "hh:mm:ss" to seconds
-      const [hours, minutes, seconds] = time.split(':').map(Number);
+      const [hours, minutes, seconds] = time.split(":").map(Number);
       return hours * 3600 + minutes * 60 + seconds;
     },
     async playAll(emotionType) {
@@ -81,7 +84,8 @@ export default {
         const startTime = this.convertTimeToSeconds(emotion.begin_time);
         this.videoPlayer.currentTime = startTime;
         this.videoPlayer.play();
-        const duration = this.convertTimeToSeconds(emotion.end_time) - startTime + 1;
+        const duration =
+          this.convertTimeToSeconds(emotion.end_time) - startTime + 1;
         setTimeout(() => {
           this.videoPlayer.pause();
           resolve();
