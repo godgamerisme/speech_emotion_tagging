@@ -1,9 +1,10 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router";
 import { initializeApp } from "firebase/app";
-import 'bootstrap'
-import './assets/globals.scss'
+import "bootstrap";
+import "./assets/globals.scss";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDh-OGfaHdr5973ea8hGYJvJlKRkxkMAog",
@@ -11,12 +12,12 @@ const firebaseConfig = {
   projectId: "fit3162-mcs21-website",
   storageBucket: "fit3162-mcs21-website.appspot.com",
   messagingSenderId: "368852834211",
-  appId: "1:368852834211:web:e011106fcac06b765fac16"
+  appId: "1:368852834211:web:e011106fcac06b765fac16",
 };
 
 initializeApp(firebaseConfig);
 
-const app = createApp(App)
-app.use(router)
+const app = createApp(App);
+app.use(router);
 
-app.mount('#app')
+app.mount("#app");
