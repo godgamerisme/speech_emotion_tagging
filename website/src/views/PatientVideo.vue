@@ -16,6 +16,10 @@
         return `${bucketUrl}${this.$route.params.videoKey}`;
       },
     },
+    mounted() {
+      // Expose the videoPlayer instance as a property
+      this.$emit('video-player', this.$refs.videoPlayer);
+    }
   };
   </script>
   

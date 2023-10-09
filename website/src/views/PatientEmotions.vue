@@ -1,14 +1,18 @@
 <template>
   <div class="patient-emotions">
     <h2>Patient Emotions</h2>
-    <ul>
-      <li v-for="(emotion, index) in emotions" :key="index" @click="navigateToTime(emotion.start, emotion.end)">
-        <div>
-          <span>{{ emotion.emotion &nbsp;}} </span>
-          <span>{{ (emotion.start) }} - {{ (emotion.end) }}</span>
-        </div>
-      </li>
-    </ul>
+    <div v-for="(emotionType, emotionsOfType) in emotionsGrouped" :key="emotionType">
+      <h3>{{ emotionsOfType }} <button @click="playAll(emotionType)"> Play All </button></h3>
+      <ul>
+        <li v-for="(emotion, index) in emotionType" :key="index" @click="seekToEmotion(emotion)">
+          <div>
+            <span>{{ emotion.emotion }}</span>
+            <span> ‎ </span>
+            <span>{{ emotion.begin_time }} - {{ emotion.end_time }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -16,20 +20,67 @@
 export default {
   props: {
     emotions: Array, // An array of emotion objects with start and end times
+    videoPlayer: Object,
+  },
+  data() {
+    return {
+      emotionTags: [],
+    };
+  },
+  computed: {
+    emotionsGrouped() {
+      // Group emotions by their emotion type
+      const groupedEmotions = {};
+      for (const emotion of this.emotionTags) {
+        const emotionType = emotion.emotion;
+        if (!groupedEmotions[emotionType]) {
+          groupedEmotions[emotionType] = [];
+        }
+        groupedEmotions[emotionType].push(emotion);
+      }
+      console.log(groupedEmotions);
+      return groupedEmotions;
+    },
+  },
+  mounted() {
+    this.emotionTags = this.emotions;
   },
   methods: {
-    navigateToTime(startTime, endTime) {
-      // Implement logic to navigate to the specific time range in the video
-      // You can use JavaScript's currentTime property to set the video playback time
-      // For example, if you have a reference to the video element, you can do:
-      // this.$refs.videoPlayer.currentTime = parseTimestamp(startTime);
-      // Also, you can set the endTime if needed.
+    logtoconsole(message) {
+      console.log(message);
     },
-    formatTime(timestamp) {
-      // Implement a function to format the timestamp (e.g., convert seconds to HH:MM:SS)
-      // Example:
-      // const time = new Date(timestamp * 1000).toISOString().substr(11, 8);
-      // return time;
+    seekToEmotion(emotion) {
+      // Use the videoPlayer reference to seek to the emotion's start time
+      if (this.videoPlayer) {
+        const startTime = this.convertTimeToSeconds(emotion.begin_time);
+        this.videoPlayer.currentTime = startTime;
+      }
+    },
+    convertTimeToSeconds(time) {
+      // Convert time in the format "hh:mm:ss" to seconds
+      const [hours, minutes, seconds] = time.split(':').map(Number);
+      return hours * 3600 + minutes * 60 + seconds;
+    },
+    async playAll(emotionType) {
+      const emotionsToPlay = this.emotionsGrouped[emotionType];
+      if (emotionType && emotionType.length > 0) {
+        for (const emotion of emotionType) {
+          console.log(emotion);
+          await this.playEmotion(emotion);
+        }
+      }
+    },
+    playEmotion(emotion) {
+      return new Promise((resolve) => {
+        const startTime = this.convertTimeToSeconds(emotion.begin_time);
+        this.videoPlayer.currentTime = startTime;
+        this.videoPlayer.play();
+        const duration = this.convertTimeToSeconds(emotion.end_time) - startTime;
+        setTimeout(() => {
+          this.videoPlayer.pause();
+          resolve();
+        }, duration * 1000);
+      });
     },
   },
 };
