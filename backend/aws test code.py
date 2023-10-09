@@ -9,6 +9,7 @@ import sys
 import os
 from run_model import EmotionPredictor
 from preprocessing import PreprocessVideo
+import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -59,7 +60,7 @@ class VideoStoringService:
             return None
     
     # def store_video(self, video_data, tags, patient_name, therapist_name):
-    def store_video(self, video_data, patient_name, therapist_name, emotion_tags):
+    def store_video(self, video_data, patient_name, therapist_name, emotion_tags, age):
         
         key = patient_name+'-'+str(uuid.uuid4())
         
@@ -73,11 +74,14 @@ class VideoStoringService:
         
         # put metadata in AWS dynamoDB database
         table = boto3.resource('dynamodb').Table('mcs21fyp')
+        today_date = datetime.date.today().strftime("%m/%d/%Y")
         input = {
             'key': key,
             'patientName': patient_name,
             'therapistName': therapist_name,
             'emotionTags': emotion_tags,
+            'age': age,
+            'date': today_date,
         }
         table.put_item(Item=input)
         return None
@@ -95,6 +99,7 @@ def process_video():
         video_file  = request.files['video']
         patient_name = request.form.get('patient_name')
         therapist_name = request.form.get('therapist_name')
+        age = request.form.get('age')
         
         # emotion_tags = use_model(video_data)
 
@@ -109,7 +114,7 @@ def process_video():
         emotion_tags = emotion_predictor.predict_emotions(preprocessed_audio_array,audio_duration,corrupted_audio_index)
         print("here")
         video_file.seek(0)
-        video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags)
+        video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags, age)
         print("store success")
         video_preprocessor.clear_all_directories()
 
@@ -131,7 +136,7 @@ class GetVideoService:
         s3 = boto3.client('s3')
         # bucket = boto3.resource('s3').Bucket('mcs21fyp')
         # video = bucket.get_object(Key=video_key).body
-
+        
         # get metadata from AWS dynamoDB database
         table = boto3.resource('dynamodb').Table('mcs21fyp')
         response = table.get_item(Key={'key': video_key})
@@ -145,10 +150,11 @@ class GetVideoService:
 
         metadata = {
             'url': url,
-            # 'tags': response.tags,
             'patientName': response['Item']['patientName'],
+            'age': response['Item']['age'],
             'therapistName': response['Item']['therapistName'],
-            #emotion_tags: emotion_tags
+            'emotionTags': response['Item']['emotionTags'],
+            'date': response['Item']['date']
         }
 
         return metadata
@@ -159,12 +165,9 @@ get_video_service = GetVideoService()
 # controller for retrieving video based on key provided
 @app.route('/get_video', methods=['POST'])
 def get_video():
-
     video_key = request.form.get('video_key')
 
     metadata = get_video_service.get_video(video_key)
-
-    
 
     return jsonify(metadata)
 
