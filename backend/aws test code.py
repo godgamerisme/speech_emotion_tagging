@@ -87,10 +87,6 @@ video_processing_service = VideoProcessingService()
 video_storing_service = VideoStoringService()
 
 
-# def use_model(video):
-#     # preprocessing + call model here
-#     return emotion_tags
-
 
 # controller for feeding video to model and uploading to database
 @app.route('/upload_video', methods=['POST'])
