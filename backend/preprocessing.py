@@ -7,6 +7,7 @@ import numpy as np
 import librosa
 from tqdm import tqdm_notebook as tqdm
 import scipy.signal
+import shutil
 
 class PreprocessVideo:
     def __init__(self,video_path= None):
@@ -22,8 +23,8 @@ class PreprocessVideo:
         return self.duration
         
     def run(self):
-        audio_output_path = "./output/audio.wav"
-        frame_output_folder = "./output/audio/frames"
+        audio_output_path = "./backend/output/audio.wav"
+        frame_output_folder = "./backend/output/audio/frames"
 
         frame_duration_ms = 3000
         self.extract_audio(self.video_path, audio_output_path)
@@ -38,7 +39,7 @@ class PreprocessVideo:
 
     def split_audio_into_frames(self,audio_path, output_frame_folder, frame_duration_ms):
         audio = AudioSegment.from_file(audio_path)
-        self.clear_directory(output_frame_folder)
+        # self.clear_directory(output_frame_folder)
 
         # Create the output folder if it doesn't exist
         os.makedirs(output_frame_folder, exist_ok=True)
@@ -70,8 +71,8 @@ class PreprocessVideo:
                     os.remove(file_path)
                 elif os.path.isdir(file_path):
                     # If you also want to remove subdirectories and their contents, uncomment the line below
-                    # shutil.rmtree(file_path)
-                    pass
+                    shutil.rmtree(file_path)
+                    # pass
             except Exception as e:
                 print(f"Error deleting {file_path}: {e}")
 
@@ -125,6 +126,10 @@ class PreprocessVideo:
                 count+=1
         print("Number of files corrupted: ",len(drop_index))
         return audios,drop_index
+    
+    def clear_all_directories(self):
+        self.clear_directory("./backend/output")
+        self.clear_directory("./backend/video")
 
 if __name__ == "__main__":
 

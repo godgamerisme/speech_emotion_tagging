@@ -103,7 +103,7 @@ def process_video():
         # emotion_tags = use_model(video_data)
 
         filename = video_file.filename
-        destination_path = './video/' + filename
+        destination_path = './backend/video/' + filename
         video_file.save(destination_path)
 
         video_preprocessor = PreprocessVideo(video_path=destination_path)
@@ -114,6 +114,7 @@ def process_video():
         print("here")
         video_storing_service.store_video(video_file, patient_name, therapist_name)
         print("store success")
+        video_preprocessor.clear_all_directories()
 
         #remove video from local folder
         # os.remove(destination_path)
