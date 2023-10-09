@@ -45,9 +45,7 @@
         >
           Sign Out
         </button>
-        <router-link v-else to="/sign-in" class="btn btn-primary"
-          >Sign In</router-link
-        >
+        <router-link v-else to="/" class="btn btn-primary">Sign In</router-link>
         <router-link to="/register" class="btn btn-secondary"
           >Register</router-link
         >

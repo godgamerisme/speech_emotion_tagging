@@ -4,10 +4,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
-import router from './router';
-import Navbar from './components/Navbar.vue';
+import { onMounted, ref } from "vue";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import router from "./router";
+import Navbar from "./components/Navbar.vue";
 
 const isLoggedIn = ref(false);
 
@@ -25,8 +25,8 @@ onMounted(() => {
 
 const handleSignOut = () => {
   signOut(auth).then(() => {
-    router.push("/")
+    isLoggedIn = false;
+    router.push("/");
   });
 };
-
 </script>
