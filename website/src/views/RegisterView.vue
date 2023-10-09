@@ -41,7 +41,11 @@
                 <hr class="my-4" />
                 <div class="d-grid gap-0">
                   <p>or sign up with:</p>
-                  <button type="button" class="btn btn-link btn-floating mx-1">
+                  <button
+                    @click="google"
+                    type="button"
+                    class="btn btn-link btn-floating mx-1"
+                  >
                     <i class="fab fa-google"></i>
                   </button>
                 </div>

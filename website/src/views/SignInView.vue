@@ -46,13 +46,16 @@
                 </button>
                 <hr class="my-4" />
 
-                <button
-                  class="btn btn-lg btn-block btn-secondary"
-                  type="submit"
-                  @click="google"
-                >
-                  <i class="bi bi-google"></i> Sign in with google
-                </button>
+                <div class="d-grid gap-0">
+                  <p>or login with:</p>
+                  <button
+                    @click="google"
+                    type="button"
+                    class="btn btn-link btn-floating mx-1"
+                  >
+                    <i class="fab fa-google"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
