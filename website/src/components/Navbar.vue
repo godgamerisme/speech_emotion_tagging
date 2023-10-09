@@ -17,7 +17,7 @@
         id="navbarColor02"
         bis_skin_checked="1"
       >
-        <ul class="navbar-nav me-auto">
+        <ul class="navbar-nav me-auto" v-if="isLoggedIn">
           <li class="nav-item">
             <router-link class="nav-link active" to="/"
               >Home
@@ -28,7 +28,9 @@
             <router-link class="nav-link" to="/videos">All Videos</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/video-player">Video Player</router-link>
+            <router-link class="nav-link" to="/video-player"
+              >Video Player</router-link
+            >
           </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/upload">Upload Page</router-link>
@@ -36,9 +38,17 @@
         </ul>
       </div>
       <div class="d-flex gap-2">
-        <button v-if="isLoggedIn" @click="handleSignOut()" class="btn btn-primary">Sign Out</button>
-        <router-link v-else to="/sign-in" class="btn btn-primary">Sign In</router-link>
-        <router-link to="/register" class="btn btn-secondary">Register</router-link>
+        <button
+          v-if="isLoggedIn"
+          @click="handleSignOut()"
+          class="btn btn-primary"
+        >
+          Sign Out
+        </button>
+        <router-link v-else to="/" class="btn btn-primary">Sign In</router-link>
+        <router-link to="/register" class="btn btn-secondary"
+          >Register</router-link
+        >
       </div>
     </div>
   </nav>
