@@ -12,6 +12,7 @@ import Navbar from "./components/Navbar.vue";
 const isLoggedIn = ref(false);
 
 let auth;
+
 onMounted(() => {
   auth = getAuth();
   onAuthStateChanged(auth, (user) => {
@@ -25,7 +26,7 @@ onMounted(() => {
 
 const handleSignOut = () => {
   signOut(auth).then(() => {
-    isLoggedIn = false;
+    isLoggedIn.value = false;
     router.push("/");
   });
 };
