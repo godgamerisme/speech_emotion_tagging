@@ -45,7 +45,7 @@
       .then((data) => {
         console.log("Successfully signed in!");
         console.log(auth.currentUser)
-        router.push("/videos");
+        router.push("/home");
       })
       .catch((error) => {
         console.log(error.code);
@@ -71,7 +71,7 @@ const google = () => {
   signInWithPopup(getAuth(), provider)
     .then((result) => {
       console.log(result.user);
-      router.push("/");
+      router.push("/home");
     })
     .catch((error) => {
       console.log(error.code);
