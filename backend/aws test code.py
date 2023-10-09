@@ -18,6 +18,7 @@ class VideoProcessingService:
     def __init__(self):
         pass
         # self.ml_client = MachineLearningApiClient()
+        # testing push
 
     def process_video(self, video_data):
         emotion_tags = self.ml_client.predict_emotion(video_data)

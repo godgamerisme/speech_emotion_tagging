@@ -32,7 +32,8 @@ const router = createRouter({
       },
     },
     {
-      path: "/video-player",
+      path: "/video-player/:videoKey",
+      name: "videoPlayer", // Add a name to the route
       component: () => import("../views/VideoPlayer.vue"),
       meta: { requiresAuth: true },
       beforeEnter: authGuard,
