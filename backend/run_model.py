@@ -30,12 +30,14 @@ class EmotionPredictor:
 
         ret_emotions = []
         frame_duration = 3
+        start_time = 0
+        end_time = 0
         for i in range(len(emotion_tags)):
-            #if its the last one, endtime is the remaining duration of audio
             #starttime is in seconds
             start_time = i*frame_duration
             #convert starttime to 00.00 format
             str_start_time = str(datetime.timedelta(seconds=start_time)).split('.')[0]
+            
             #if its the last one, endtime is the remaining duration of audio
             if i == len(emotion_tags)-1:
                 print("audio duration",audio_duration)
@@ -44,16 +46,33 @@ class EmotionPredictor:
                 end_time = start_time + frame_duration
             #convert endtime to 00.00 format
             str_end_time = str(datetime.timedelta(seconds=end_time)).split('.')[0]
-            ret_emotions.append({
-                'begin_time': str_start_time, 
-                'end_time':  str_end_time,
-                'emotion': emotion_tags[i]
-            })  
+
+            #check if str_start_time is equals to the end time of the last element in ret_emotions
+            #check the current emotion tag is the same as the emotion tags in the last element in ret_emotions
+            #if yes, add the current end time - start time to the last element in ret_emotions 
+            if len(ret_emotions) > 0 and ret_emotions[-1]['end_time'] == str_start_time and ret_emotions[-1]['emotion'] == emotion_tags[i]:
+                #get the end time of the last element in ret_emotions
+                last_end_time = ret_emotions[-1]['end_time']
+                #convert last_end_time to seconds
+                last_end_time = datetime.datetime.strptime(last_end_time, '%H:%M:%S')
+                last_end_time = last_end_time.hour*3600 + last_end_time.minute*60 + last_end_time.second
+                #add the current end time - start time to last_end_time
+                last_end_time += (end_time - start_time)
+                #convert last_end_time to 00.00 format
+                last_end_time = str(datetime.timedelta(seconds=last_end_time)).split('.')[0]
+                #update the end time of the last element in ret_emotions
+                ret_emotions[-1]['end_time'] = last_end_time
+            else:
+                ret_emotions.append({
+                    'begin_time': str_start_time, 
+                    'end_time':  str_end_time,
+                    'emotion': emotion_tags[i]
+                })  
         return ret_emotions
 
 if __name__ == "__main__":
     # Audio input path
-    video_path = "./video/Ses01F_impro01.avi"
+    video_path = "./backend/video/Ses01F_impro01.avi"
     video_preprocessor = PreprocessVideo(video_path=video_path)
     preprocessed_audio_array,corrupted_audio_index = video_preprocessor.get_preprocessed_audio_array()
     audio_duration = video_preprocessor.get_duration()
