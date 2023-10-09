@@ -60,7 +60,7 @@ class VideoStoringService:
             return None
     
     # def store_video(self, video_data, tags, patient_name, therapist_name):
-    def store_video(self, video_data, patient_name, therapist_name, emotion_tags, age):
+    def store_video(self, video_data, patient_name, therapist_name, emotion_tags, age, date='12/12/2023'):
         
         key = patient_name+'-'+str(uuid.uuid4())
         
@@ -81,7 +81,8 @@ class VideoStoringService:
             'therapistName': therapist_name,
             'emotionTags': emotion_tags,
             'age': age,
-            'date': today_date,
+            # 'date': today_date,
+            'date': date,
         }
         table.put_item(Item=input)
         return None
@@ -193,6 +194,8 @@ class GetAllVideosService:
                     # 'tags': item.get('tags'),  # You can access other attributes similarly
                     'patientName': item.get('patientName'),
                     'therapistName': item.get('therapistName'),
+                    'date': item.get('date'),
+                    'age': item.get('age'),
                 }
                 data.append({
                     'video_key': video_key,
