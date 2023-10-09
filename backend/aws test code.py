@@ -112,6 +112,7 @@ def process_video():
         emotion_predictor = EmotionPredictor()
         emotion_tags = emotion_predictor.predict_emotions(preprocessed_audio_array,audio_duration,corrupted_audio_index)
         print("here")
+        video_file.seek(0)
         video_storing_service.store_video(video_file, patient_name, therapist_name)
         print("store success")
         video_preprocessor.clear_all_directories()
