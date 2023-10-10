@@ -106,16 +106,14 @@ def process_video():
         age = request.form.get('age')
         gender = request.form.get('gender')
 
-        video_preprocessor = PreprocessVideo(video_path=destination_path)
-        video_preprocessor.clear_all_directories()
-
-        
-        # emotion_tags = use_model(video_data)
+        # emotion_tags = use_model(videodata)
+        clear_directory("./backend/video")
 
         filename = video_file.filename
         destination_path = './backend/video/' + filename
         video_file.save(destination_path)
-
+        
+        video_preprocessor = PreprocessVideo(video_path=destination_path)
         preprocessed_audio_array,corrupted_audio_index = video_preprocessor.get_preprocessed_audio_array()
         audio_duration = video_preprocessor.get_duration()
         emotion_predictor = EmotionPredictor()
@@ -127,16 +125,14 @@ def process_video():
             #use ffmpeg to convert to mp4
             print("converting to mp4")
             try:
-                os.system(['ffmpeg', '-i', destination_path, destination_path.replace(".avi", ".mp4")])
+                subprocess.run(['ffmpeg', '-i', destination_path, destination_path.replace(".avi", ".mp4")],check=True)
                 destination_path = destination_path.replace(".avi", ".mp4")
-                file = open(destination_path, "rb")
-                video_file = FileStorage(stream=file,filename=filename.replace(".avi", ".mp4"))
+                video_file = FileStorage(stream=open(destination_path, "rb"),filename=filename.replace(".avi", ".mp4"))
             except Exception as e:
                 print("error converting to mp4")
                 return jsonify({'error': str(e)}), 500
         video_file.seek(0)
         video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags, age, gender)
-        file.close()
         video_file.close()
         print("store success")
         video_preprocessor.clear_all_directories()
@@ -244,6 +240,31 @@ def get_all_videos():
     all_videos = get_all_videos_service.get_all_videos()
 
     return jsonify(all_videos)
+
+
+def clear_directory(directory_path):
+        # Ensure the path exists
+        if not os.path.exists(directory_path):
+            print(f"The directory '{directory_path}' does not exist.")
+            return
+
+        # List all files in the directory
+        file_list = os.listdir(directory_path)
+
+        # Remove each file
+        for file_name in file_list:
+            file_path = os.path.join(directory_path, file_name)
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                elif os.path.isdir(file_path):
+                    # If you also want to remove subdirectories and their contents, uncomment the line below
+                    shutil.rmtree(file_path)
+                    # pass
+            except Exception as e:
+                print(f"Error deleting {file_path}: {e}")
+
+        print(f"All files in '{directory_path}' have been deleted.")
 
 
 if __name__ == '__main__':
