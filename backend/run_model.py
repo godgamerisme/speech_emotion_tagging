@@ -23,6 +23,8 @@ class EmotionPredictor:
         label_mapping_df = pd.read_csv('./backend/model/label_mapping.csv')
         label_mapping_dict = dict(zip(label_mapping_df['EncodedLabel'], label_mapping_df['OriginalLabel']))
         emotion_tags = [label_mapping_dict[x] for x in emotion_tags]
+        emotion_tags = [emotion.split('_')[1] for emotion in emotion_tags ]
+
         if corrupted_audio_index:
             # replace emotion tags of corrupted audio with 'No Emotion'
             for index in corrupted_audio_index:
