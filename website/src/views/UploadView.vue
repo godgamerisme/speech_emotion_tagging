@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-4 my-4 w-75">
+  <div class="container ml-3 my-4 w-75">
     <div class="form-group">
       <label for="formFile" class="form-label mt-4">Upload Video File</label>
       <input
@@ -59,16 +59,23 @@
         </button>
       </div>
     </div>
-  </div>
-
-  <div>
-    <div v-if="alertError" class="alert alert-dismissible alert-danger">
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      <strong>{{ message }}</strong>
-    </div>
-    <div v-if="uploadSuccess" class="alert alert-dismissible alert-success">
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      <strong>{{ message }}</strong>
+    <div class="container mt-4">
+      <div v-if="alertError" class="alert alert-dismissible alert-danger">
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+        <strong>{{ message }}</strong>
+      </div>
+      <div v-if="uploadSuccess" class="alert alert-dismissible alert-success">
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+        <strong>{{ message }}</strong>
+      </div>
     </div>
   </div>
 </template>
