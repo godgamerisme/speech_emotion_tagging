@@ -10,11 +10,10 @@
       <div class="d-flex flex-column gap-3 w-25">
         <patient-details class="card p-4" :session="session" />
         <patient-emotions
-          v-if="emotions"
+          v-if="emotions.length"
           class="card p-4"
-          :emotions="emotions"
-          :videoPlayer="videoPlayer"
-          
+          :emotions="this.emotions"
+          :videoPlayer="videoPlayer" 
         />
       </div>
     </div>
@@ -56,7 +55,7 @@ export default {
         },
       },
 
-      emotions: [{}
+      emotions: [
       ],
       videoPlayer: null,
       loaded: false,
@@ -99,7 +98,6 @@ export default {
           this.session.doctor = response.data.therapistName;
           this.session.date = new Date(response.data.date);
           this.emotions = response.data.emotionTags;
-          console.log(this.emotions);
         })
         .catch((error) => {
           console.log("Error making POST request: ", error);
