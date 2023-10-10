@@ -14,9 +14,10 @@ export default {
   },
   methods: {
     updateVideoTime() {
-      console.log("video time updated!");
+      const video = this.$refs.videoPlayer;
+      const currentTime = video.currentTime;
       // Emit the video-player event with the updated videoPlayer reference
-      this.$emit("video-player", this.$refs.videoPlayer);
+      this.$emit("update-video-time", currentTime);
     },
   },
   mounted() {
@@ -24,7 +25,7 @@ export default {
     this.$emit("video-player", this.$refs.videoPlayer);
     console.log("Video player mounted");
     console.log(this.videoSrc);
-    this.$refs.videoPlayer.addEventListener("timeupdate", this.updateCurrentEmotion);
+    this.$refs.videoPlayer.addEventListener("timeupdate", this.updateVideoTime);
   },
 };
 </script>
