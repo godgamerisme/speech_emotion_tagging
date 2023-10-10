@@ -105,6 +105,10 @@ def process_video():
         therapist_name = request.form.get('therapist_name')
         age = request.form.get('age')
         gender = request.form.get('gender')
+
+        video_preprocessor = PreprocessVideo(video_path=destination_path)
+        video_preprocessor.clear_all_directories()
+
         
         # emotion_tags = use_model(video_data)
 
@@ -112,7 +116,6 @@ def process_video():
         destination_path = './backend/video/' + filename
         video_file.save(destination_path)
 
-        video_preprocessor = PreprocessVideo(video_path=destination_path)
         preprocessed_audio_array,corrupted_audio_index = video_preprocessor.get_preprocessed_audio_array()
         audio_duration = video_preprocessor.get_duration()
         emotion_predictor = EmotionPredictor()
@@ -126,12 +129,15 @@ def process_video():
             try:
                 os.system(['ffmpeg', '-i', destination_path, destination_path.replace(".avi", ".mp4")])
                 destination_path = destination_path.replace(".avi", ".mp4")
-                video_file = FileStorage(stream=open(destination_path, "rb"),filename=filename.replace(".avi", ".mp4"))
+                file = open(destination_path, "rb")
+                video_file = FileStorage(stream=file,filename=filename.replace(".avi", ".mp4"))
             except Exception as e:
                 print("error converting to mp4")
                 return jsonify({'error': str(e)}), 500
         video_file.seek(0)
         video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags, age, gender)
+        file.close()
+        video_file.close()
         print("store success")
         video_preprocessor.clear_all_directories()
         
