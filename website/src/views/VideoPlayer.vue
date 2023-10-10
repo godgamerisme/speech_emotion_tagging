@@ -38,6 +38,13 @@ export default {
       videoSrc: String,
       videoKey: String,
       session: {
+        // date: new Date("2023-10-02"),
+        // doctor: "Dr. Smith",
+        // patient: {
+        //   age: 30,
+        //   gender: "Male",
+        //   name: "John Doe",
+        // },
         date: new Date("2023-10-02"),
         doctor: "Dr. Smith",
         patient: {
@@ -273,6 +280,11 @@ export default {
     this.videoKey = this.$route.params.videoKey;
     console.log(this.videoKey);
     this.fetchVideoData(this.videoKey);
+    this.patientName = "";
+    this.age = "";
+    this.therapistName = "";
+    this.date = "";
+    this.emotionTags = null;
   },
   created() {},
 
@@ -299,6 +311,11 @@ export default {
           //   this.session = response.data.session;
           //   this.emotions = response.data.emotions;
           //   console.log(this.videoSrc);
+          this.session.patient.name = response.data.patientName;
+          this.session.patient.age = response.data.age;
+          this.session.doctor = response.data.therapistName;
+          this.session.date = new Date(response.data.date);
+          this.emotionTags = response.data.emotionTags;
         })
         .catch((error) => {
           console.log("Error making POST request: ", error);

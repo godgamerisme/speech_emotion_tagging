@@ -62,8 +62,8 @@ class VideoStoringService:
             return None
     
     # def store_video(self, video_data, tags, patient_name, therapist_name):
-    def store_video(self, video_data, patient_name, therapist_name, emotion_tags, age, date='12/12/2023'):
-        
+    def store_video(self, video_data, patient_name, therapist_name, emotion_tags, age):
+        test_date='12/12/2023'
         key = patient_name+'-'+str(uuid.uuid4())
         
         # put video and thumbnail in AWS S3 database
@@ -83,8 +83,8 @@ class VideoStoringService:
             'therapistName': therapist_name,
             'emotionTags': emotion_tags,
             'age': age,
-            # 'date': today_date,
-            'date': date,
+            'date': today_date,
+            # 'date': test_date,
         }
         table.put_item(Item=input)
         return None
@@ -116,7 +116,7 @@ def process_video():
         emotion_predictor = EmotionPredictor()
         emotion_tags = emotion_predictor.predict_emotions(preprocessed_audio_array,audio_duration,corrupted_audio_index)
         print("here")
-        # video_file.seek(0)
+        
         #check if its an avi file
         if is_avi_file(filename):
             #use ffmpeg to convert to mp4
@@ -124,10 +124,12 @@ def process_video():
             subprocess.call(['ffmpeg', '-i', destination_path, destination_path.replace(".avi", ".mp4")])
             destination_path = destination_path.replace(".avi", ".mp4")
             video_file = FileStorage(stream=open(destination_path, "rb"),filename=filename.replace(".avi", ".mp4"))
+        
+        video_file.seek(0)
         video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags, age)
         print("store success")
         video_preprocessor.clear_all_directories()
-
+        
         #remove video from local folder
         # os.remove(destination_path)
 
@@ -189,8 +191,8 @@ class GetVideoService:
             'patientName': response['Item']['patientName'],
             'age': response['Item']['age'],
             'therapistName': response['Item']['therapistName'],
-            'emotionTags': response['Item']['emotionTags'],
-            'date': response['Item']['date']
+            'date': response['Item']['date'],
+            'emotionTags': response['Item']['emotionTags'],            
         }
 
         return metadata

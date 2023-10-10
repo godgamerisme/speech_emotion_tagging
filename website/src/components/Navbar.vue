@@ -19,7 +19,7 @@
       >
         <ul class="navbar-nav me-auto" v-if="isLoggedIn">
           <li class="nav-item">
-            <router-link class="nav-link active" to="/"
+            <router-link class="nav-link active" to="/home"
               >Home
               <span class="visually-hidden">(current)</span>
             </router-link>
