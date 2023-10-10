@@ -69,7 +69,7 @@ export default {
     console.log(this.videoKey);
     this.fetchVideoData(this.videoKey);
 
-    
+
   },
   created() {},
 
