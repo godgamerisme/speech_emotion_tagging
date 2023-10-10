@@ -148,26 +148,6 @@ def is_avi_file(filename):
     return file_extension.lower() == '.avi'
     
 
-    # return jsonify({"emotion_tags": emotion_tags})
-
-
-# import requests
-
-# class MachineLearningApiClient:
-#     def __init__(self):
-#         self.ml_api_endpoint = # "http://your_ml_server/predict";
-
-#     def predict_emotion(self, video_data):
-#         response = requests.post(self.ml_api_endpoint, json={"video_data": video_data})
-        
-#         if response.status_code == 200:
-#             prediction_result = response.json()
-#             emotion_tags = prediction_result.get("emotion_tags", "Emotion tags not available")
-#             return emotion_tags
-#         else:
-#             return "Error processing video"
-        
-    
 
 # service that returns the video that the user clicks on
 class GetVideoService:  
