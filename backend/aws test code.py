@@ -123,10 +123,13 @@ def process_video():
         if is_avi_file(filename):
             #use ffmpeg to convert to mp4
             print("converting to mp4")
-            subprocess.call(['ffmpeg', '-i', destination_path, destination_path.replace(".avi", ".mp4")])
-            destination_path = destination_path.replace(".avi", ".mp4")
-            video_file = FileStorage(stream=open(destination_path, "rb"),filename=filename.replace(".avi", ".mp4"))
-        
+            try:
+                os.system(['ffmpeg', '-i', destination_path, destination_path.replace(".avi", ".mp4")])
+                destination_path = destination_path.replace(".avi", ".mp4")
+                video_file = FileStorage(stream=open(destination_path, "rb"),filename=filename.replace(".avi", ".mp4"))
+            except Exception as e:
+                print("error converting to mp4")
+                return jsonify({'error': str(e)}), 500
         video_file.seek(0)
         video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags, age, gender)
         print("store success")
