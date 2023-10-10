@@ -4,7 +4,7 @@
       <div class="row">
         <!-- Multi-criteria filtering options (left column) -->
         <div class="col-md-3 mt-5 offset-md-1">
-          <div class="container border border-primary rounded py-4">
+          <div class="container border border-primary rounded py-4 pb-5">
             <p class="text-primary fs-2 mb-4">Filters</p>
             <!-- Search bar -->
             <label>Search patient:</label>
