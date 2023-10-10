@@ -6,12 +6,12 @@
         class="w-75"
         :videoSrc="this.videoSrc"
         @video-player="setVideoPlayer"
-        @update-video-time="updateCurrentTime"
+        @update-video-time="updateCurrentEmotion"
       />
       <div class="d-flex flex-column gap-3 w-25">
         <patient-details class="card p-4" :session="session" />
         <div class="card p-4">
-          <p>Current Emotion: {{ currentEmotion }}</p>
+          <p>Current Emotion: {{ this.currentEmotion }}</p>
         </div>
         <patient-emotions
           v-if="emotions.length"
@@ -43,13 +43,6 @@ export default {
       videoSrc: String,
       videoKey: String,
       session: {
-        // date: new Date("2023-10-02"),
-        // doctor: "Dr. Smith",
-        // patient: {
-        //   age: 30,
-        //   gender: "Male",
-        //   name: "John Doe",
-        // },
         date: new Date("2023-10-02"),
         doctor: "Dr. Smith",
         patient: {
@@ -75,9 +68,12 @@ export default {
   },
   created() {},
 
-  computed: {
-    // Use a computed property to determine the current emotion based on video time
-    currentEmotion() {
+  
+  methods: {
+    updateCurrentEmotion(currentTime) {
+      this.videoCurrentTime = currentTime;
+      console.log("Current time: ", this.videoCurrentTime);
+
       if (this.videoPlayer) {
         const currentTime = this.videoCurrentTime; // Get the current video time in seconds
         const matchingEmotion = this.emotions.find((emotion) => {
@@ -87,16 +83,9 @@ export default {
             currentTime >= beginTimeInSeconds && currentTime <= endTimeInSeconds
           );
         });
-        return matchingEmotion ? matchingEmotion.emotion : null;
+        this.currentEmotion = matchingEmotion.emotion;
       }
-      return null;
-    },
-  },
-
-  methods: {
-    updateCurrentTime(currentTime) {
-      this.videoCurrentTime = currentTime;
-      console.log("Current time: ", this.videoCurrentTime);
+      
     },
     setVideoPlayer(videoPlayer) {
       // Capture the videoPlayer reference
