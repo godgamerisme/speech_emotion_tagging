@@ -33,7 +33,7 @@
             >
           </li> -->
         <li class="nav-item">
-          <router-link class="nav-link" to="/upload">Upload Page</router-link>
+          <router-link class="nav-link" to="/upload">Upload Video</router-link>
         </li>
       </ul>
     </div>
