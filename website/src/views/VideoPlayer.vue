@@ -72,23 +72,6 @@ export default {
 
   
   methods: {
-    updateCurrentEmotion(currentTime) {
-      this.videoCurrentTime = currentTime;
-      console.log("Current time: ", this.videoCurrentTime);
-
-      if (this.videoPlayer) {
-        const currentTime = this.videoCurrentTime; // Get the current video time in seconds
-        const matchingEmotion = this.emotions.find((emotion) => {
-          const beginTimeInSeconds = timeToSeconds(emotion.begin_time);
-          const endTimeInSeconds = timeToSeconds(emotion.end_time);
-          return (
-            currentTime >= beginTimeInSeconds && currentTime <= endTimeInSeconds
-          );
-        });
-        this.currentEmotion = matchingEmotion.emotion;
-      }
-      
-    },
     setVideoPlayer(videoPlayer) {
       // Capture the videoPlayer reference
       this.videoPlayer = videoPlayer;
