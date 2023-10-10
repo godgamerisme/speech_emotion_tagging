@@ -9,6 +9,7 @@
       />
       <div class="d-flex flex-column gap-3 w-25">
         <patient-details class="card p-4" :session="session" />
+        <div class="card p-4"><p >Current Emotion: {{ currentEmotion }}</p></div> 
         <patient-emotions
           v-if="emotions.length"
           class="card p-4"
@@ -58,15 +59,41 @@ export default {
       emotions: [],
       videoPlayer: null,
       loaded: false,
+      currentEmotion: null,
     };
   },
+  
   mounted() {
     this.videoSrc = "";
     this.videoKey = this.$route.params.videoKey;
     console.log(this.videoKey);
     this.fetchVideoData(this.videoKey);
+
+    
   },
   created() {},
+
+  
+
+  computed: {
+    // Use a computed property to determine the current emotion based on video time
+    // currentEmotion() {
+    //   console.log("TESTING HERE");
+    //   if (this.videoPlayer) {
+    //     console.log("TESTING HERE 2", this.videoPlayer.currentTime); 
+    //     // console.log("TIME", this.videoPlayer.currentTime);
+    //     const currentTime = this.videoPlayer.currentTime; // Get the current video time in seconds
+    //     const matchingEmotion = this.emotions.find((emotion) => {
+    //       const beginTimeInSeconds = timeToSeconds(emotion.begin_time);
+    //       const endTimeInSeconds = timeToSeconds(emotion.end_time);
+    //       return currentTime >= beginTimeInSeconds && currentTime <= endTimeInSeconds;
+    //     });
+    //     return matchingEmotion ? matchingEmotion.emotion : null;
+    //   }
+      
+    //   return null;
+    // },
+  },
 
   methods: {
     setVideoPlayer(videoPlayer) {
@@ -102,6 +129,27 @@ export default {
           console.log("Error making POST request: ", error);
         });
     },
+    updateCurrentEmotion() {
+      console.log("updating emotion");
+      // Handle the update of currentEmotion based on the video's current time
+      if (this.videoPlayer) {
+        const currentTime = this.videoPlayer.currentTime;
+        const matchingEmotion = this.emotions.find((emotion) => {
+          const beginTimeInSeconds = timeToSeconds(emotion.begin_time);
+          const endTimeInSeconds = timeToSeconds(emotion.end_time);
+          return currentTime >= beginTimeInSeconds && currentTime <= endTimeInSeconds;
+        });
+        this.currentEmotion = matchingEmotion ? matchingEmotion.emotion : null;
+      }
+    },
   },
 };
+
+// Helper function to convert time format "0:00:00" to seconds
+function timeToSeconds(time) {
+  const parts = time.split(":");
+  return (
+    parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2])
+  );
+}
 </script>

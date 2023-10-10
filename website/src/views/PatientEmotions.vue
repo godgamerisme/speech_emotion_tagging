@@ -5,7 +5,14 @@
       v-for="(emotionType, emotionsOfType) in emotionsGrouped"
       :key="emotionType"
     >
-      <h3 @click="playAll(emotionType)">{{ emotionsOfType }}</h3>
+      <h3 @click="playAll(emotionType)" class="mt-3">
+        <i v-if="emotionsOfType==='male_fearful'" class="fa-regular fa-face-frown-open"></i>
+        <i v-else-if="emotionsOfType==='male_sad'" class="fa-regular fa-face-frown"></i> 
+        <i v-else-if="emotionsOfType==='male_happy'" class="fa-regular fa-face-smile"></i> 
+        <i v-else-if="emotionsOfType==='male_disgust'" class="fa-regular fa-face-tired"></i>
+        <i v-else-if="emotionsOfType==='male_neutral'" class="fa-regular fa-face-meh"></i>  
+        <i v-else-if="emotionsOfType==='male_angry'" class="fa-regular fa-face-angry"></i>    
+        {{ emotionsOfType }}</h3>
       <ul>
         <li
           v-for="(emotion, index) in emotionType"
