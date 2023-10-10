@@ -1,12 +1,18 @@
 <template>
   <div class="container mt-5">
-    <div class="d-flex gap-3">
-      <video-player
-        v-if="videoSrc"
-        class="w-75"
-        :videoSrc="this.videoSrc"
-        @video-player="setVideoPlayer"
-      />
+    <div class="d-flex gap-3 justify-content-center">
+      <div>
+        <video-player
+          v-if="videoSrc"
+          class="w-90"
+          :videoSrc="this.videoSrc"
+          @video-player="setVideoPlayer"
+          @update-video-time="updateCurrentEmotion"
+        />
+        <div class="card p-2 align-items-center fs-5">
+          Current Emotion: {{ this.currentEmotion }}
+        </div>
+      </div>
       <div class="d-flex flex-column gap-3 w-25">
         <patient-details class="card p-4" :session="session" />
         <patient-emotions
@@ -39,13 +45,6 @@ export default {
       videoSrc: String,
       videoKey: String,
       session: {
-        // date: new Date("2023-10-02"),
-        // doctor: "Dr. Smith",
-        // patient: {
-        //   age: 30,
-        //   gender: "Male",
-        //   name: "John Doe",
-        // },
         date: new Date("2023-10-02"),
         doctor: "Dr. Smith",
         patient: {
@@ -58,8 +57,11 @@ export default {
       emotions: [],
       videoPlayer: null,
       loaded: false,
+      currentEmotion: null,
+      videoCurrentTime: 0,
     };
   },
+
   mounted() {
     this.videoSrc = "";
     this.videoKey = this.$route.params.videoKey;
@@ -68,6 +70,7 @@ export default {
   },
   created() {},
 
+  
   methods: {
     setVideoPlayer(videoPlayer) {
       // Capture the videoPlayer reference
@@ -97,12 +100,34 @@ export default {
           this.session.doctor = response.data.therapistName;
           this.session.date = new Date(response.data.date);
           this.emotions = response.data.emotionTags;
-          console.log(this.emotions);
         })
         .catch((error) => {
           console.log("Error making POST request: ", error);
         });
     },
+    updateCurrentEmotion() {
+      console.log("updating emotion");
+      // Handle the update of currentEmotion based on the video's current time
+      if (this.videoPlayer) {
+        const currentTime = this.videoPlayer.currentTime;
+        const matchingEmotion = this.emotions.find((emotion) => {
+          const beginTimeInSeconds = timeToSeconds(emotion.begin_time);
+          const endTimeInSeconds = timeToSeconds(emotion.end_time);
+          return (
+            currentTime >= beginTimeInSeconds && currentTime <= endTimeInSeconds
+          );
+        });
+        this.currentEmotion = matchingEmotion ? matchingEmotion.emotion : null;
+      }
+    },
   },
 };
+
+// Helper function to convert time format "0:00:00" to seconds
+function timeToSeconds(time) {
+  const parts = time.split(":");
+  return (
+    parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2])
+  );
+}
 </script>
