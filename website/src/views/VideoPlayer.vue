@@ -80,7 +80,7 @@ export default {
         },
         // Add more emotion objects with timestamps as needed
       ],
-      emotions: [
+      emotions3: [
         {
           begin_time: "0:00:00",
           emotion: "male_disgust",
@@ -272,6 +272,9 @@ export default {
           end_time: "0:01:52",
         },
       ],
+      emotions: [
+        
+      ],
       videoPlayer: null,
     };
   },
@@ -282,9 +285,10 @@ export default {
     this.fetchVideoData(this.videoKey);
     this.patientName = "";
     this.age = "";
+    this.gender = "";
     this.therapistName = "";
     this.date = "";
-    this.emotionTags = null;
+    this.emotions = null;
   },
   created() {},
 
@@ -313,9 +317,12 @@ export default {
           //   console.log(this.videoSrc);
           this.session.patient.name = response.data.patientName;
           this.session.patient.age = response.data.age;
+          this.session.patient.gender = response.data.gender;
           this.session.doctor = response.data.therapistName;
           this.session.date = new Date(response.data.date);
-          this.emotionTags = response.data.emotionTags;
+          this.emotions = [{begin_time: "0:00:00",
+          emotion: "male_disgust",
+          end_time: "0:00:03",}];
         })
         .catch((error) => {
           console.log("Error making POST request: ", error);

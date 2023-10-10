@@ -62,7 +62,7 @@ class VideoStoringService:
             return None
     
     # def store_video(self, video_data, tags, patient_name, therapist_name):
-    def store_video(self, video_data, patient_name, therapist_name, emotion_tags, age):
+    def store_video(self, video_data, patient_name, therapist_name, emotion_tags, age, gender):
         test_date='12/12/2023'
         key = patient_name+'-'+str(uuid.uuid4())
         
@@ -83,6 +83,7 @@ class VideoStoringService:
             'therapistName': therapist_name,
             'emotionTags': emotion_tags,
             'age': age,
+            'gender': gender,
             'date': today_date,
             # 'date': test_date,
         }
@@ -103,6 +104,7 @@ def process_video():
         patient_name = request.form.get('patient_name')
         therapist_name = request.form.get('therapist_name')
         age = request.form.get('age')
+        gender = request.form.get('gender')
         
         # emotion_tags = use_model(video_data)
 
@@ -126,7 +128,7 @@ def process_video():
             video_file = FileStorage(stream=open(destination_path, "rb"),filename=filename.replace(".avi", ".mp4"))
         
         video_file.seek(0)
-        video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags, age)
+        video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags, age, gender)
         print("store success")
         video_preprocessor.clear_all_directories()
         
@@ -191,6 +193,7 @@ class GetVideoService:
             'patientName': response['Item']['patientName'],
             'age': response['Item']['age'],
             'therapistName': response['Item']['therapistName'],
+            'gender': response['Item']['gender'],  
             'date': response['Item']['date'],
             'emotionTags': response['Item']['emotionTags'],            
         }
