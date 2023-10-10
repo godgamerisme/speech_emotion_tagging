@@ -1,19 +1,64 @@
 <template>
-  <div>
-    <input type="file" @change="handleFileUpload" accept=".mp4,.avi" />
-    <!--rmb change this back-->>
-    <input type="text" v-model="patientName" placeholder="Enter patient name" />
-    <input
-      type="text"
-      v-model="therapistName"
-      placeholder="Enter therapist name"
-    />
-    <input type="text" v-model="patientAge" placeholder="Enter patient age" />
-    <select v-model="patientGender" placeholder="Select patient gender">
-      <option value="Male">Male</option>
-      <option value="Female">Female</option>
-    </select>
-    <button @click="uploadVideo">Upload Video</button>
+  <div class="container mx-4 my-4 w-75">
+    <div class="form-group">
+      <label for="formFile" class="form-label mt-4">Upload Video File</label>
+      <input
+        class="form-control"
+        type="file"
+        id="formFile"
+        @change="handleFileUpload"
+        accept=".mp4,.avi"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="patientName" class="form-label mt-4">Patient's Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="patientName"
+        v-model="patientName"
+        placeholder="Enter patient name"
+      />
+    </div>
+    <div class="form-group">
+      <label for="therapistName" class="form-label mt-4"
+        >Therapist's Name</label
+      >
+      <input
+        type="text"
+        class="form-control"
+        id="therapistName"
+        v-model="therapistName"
+        placeholder="Enter therapist name"
+      />
+    </div>
+    <div class="form-group">
+      <label for="patientAge" class="form-label mt-4">Patient's Age</label>
+      <input
+        type="number"
+        class="form-control"
+        id="patientAge"
+        v-model="patientAge"
+        placeholder="Enter patient age"
+        min="1"
+        max="100"
+      />
+    </div>
+    <div class="form-group">
+      <label for="selectGender" class="form-label mt-4">Patient's Gender</label>
+      <select v-model="patientGender" class="form-select" id="selectGender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </div>
+    <div class="container mt-4">
+      <div class="d-flex justify-content-end">
+        <button type="submit" @click="uploadVideo" class="btn btn-primary">
+          Upload Video
+        </button>
+      </div>
+    </div>
   </div>
 
   <div>
