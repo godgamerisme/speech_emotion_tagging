@@ -54,6 +54,7 @@ export default {
   },
   mounted() {
     this.emotionTags = this.emotions;
+    console.log("emotions", this.emotions);
   },
   methods: {
     logtoconsole(message) {
