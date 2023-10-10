@@ -12,8 +12,8 @@
         <patient-emotions
           v-if="emotions.length"
           class="card p-4"
-          :emotions="this.emotions"
-          :videoPlayer="videoPlayer" 
+          :emotions="emotions"
+          :videoPlayer="videoPlayer"
         />
       </div>
     </div>
@@ -55,8 +55,7 @@ export default {
         },
       },
 
-      emotions: [
-      ],
+      emotions: [],
       videoPlayer: null,
       loaded: false,
     };
