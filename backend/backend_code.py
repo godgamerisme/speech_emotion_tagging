@@ -244,8 +244,8 @@ def clear_directory(directory_path):
                     os.remove(file_path)
                 elif os.path.isdir(file_path):
                     # If you also want to remove subdirectories and their contents, uncomment the line below
-                    shutil.rmtree(file_path)
-                    # pass
+                    # shutil.rmtree(file_path)
+                    pass
             except Exception as e:
                 print(f"Error deleting {file_path}: {e}")
 
