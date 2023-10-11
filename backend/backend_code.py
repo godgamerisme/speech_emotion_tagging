@@ -17,7 +17,7 @@ CORS(app)
     
 
 # service to upload video to S3 and other data to DynamoDB
-class VideoStoringService:
+class StoreVideoService:
     def extract_thumbnail(self, video):
         video_format = video.filename.rsplit('.', 1)[1].lower()
 
@@ -80,7 +80,7 @@ class VideoStoringService:
         return None
 
 
-video_storing_service = VideoStoringService()
+store_video_service = StoreVideoService()
 
 
 
@@ -120,7 +120,7 @@ def process_video():
                 print("error converting to mp4")
                 return jsonify({'error': str(e)}), 500
         video_file.seek(0)
-        video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags, age, gender)
+        store_video_service.store_video(video_file, patient_name, therapist_name, emotion_tags, age, gender)
         video_file.close()
         print("store success")
         video_preprocessor.clear_all_directories()
@@ -153,7 +153,6 @@ class GetVideoService:
         # get metadata from AWS dynamoDB database
         table = boto3.resource('dynamodb').Table('mcs21fyp')
         response = table.get_item(Key={'key': video_key})
-        print(response)
 
         url = s3.generate_presigned_url(
         'get_object',
@@ -170,7 +169,6 @@ class GetVideoService:
             'date': response['Item']['date'],
             'emotionTags': response['Item']['emotionTags'],            
         }
-
         return metadata
 
 
