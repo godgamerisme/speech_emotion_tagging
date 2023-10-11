@@ -59,23 +59,16 @@
         </button>
       </div>
     </div>
-    <div class="container mt-4">
-      <div v-if="alertError" class="alert alert-dismissible alert-danger">
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-        ></button>
-        <strong>{{ message }}</strong>
-      </div>
-      <div v-if="uploadSuccess" class="alert alert-dismissible alert-success">
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-        ></button>
-        <strong>{{ message }}</strong>
-      </div>
+    <div v-if="alertError" class="alert alert-dismissible alert-danger mt-4">
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      <strong>{{ message }}</strong>
+    </div>
+    <div
+      v-if="uploadSuccess"
+      class="alert alert-dismissible alert-success mt-4"
+    >
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      <strong>{{ message }}</strong>
     </div>
   </div>
 </template>
@@ -88,22 +81,22 @@ export default {
   data() {
     return {
       patientGender: "",
-      alertError: false,
-      message: "",
-      uploadSuccess: false,
+      // alertError: false,
+      // message: "",
+      // uploadSuccess: false,
     };
   },
   created() {
     // Initialize data when the component is created
-    this.resetData();
+    // this.resetData();
   },
   methods: {
-    resetData() {
-      this.patientGender = "";
-      this.alertError = false;
-      this.message = "";
-      this.uploadSuccess = false;
-    },
+    // resetData() {
+    //   this.patientGender = "";
+    //   this.alertError = false;
+    //   this.message = "";
+    //   this.uploadSuccess = false;
+    // },
   },
 
   setup() {
@@ -112,6 +105,9 @@ export default {
     const patientAge = ref("");
     const patientGender = ref("Male");
     let selectedFile = ref(null);
+    let uploadSuccess = ref(false);
+    let alertError = ref(false);
+    let message = ref("");
 
     const handleFileUpload = (event) => {
       selectedFile = event.target.files[0];
@@ -135,14 +131,16 @@ export default {
         .then((response) => {
           // Handle the response from the backend
           console.log("Video uploaded successfully");
-          this.uploadSuccess = true;
-          this.message = "Video uploaded successfully";
+          if (response.status == 200) {
+            uploadSuccess.value = true;
+            message.value = "Video uploaded successfully";
+          }
         })
         .catch((error) => {
           // Handle errors
           console.error("Error uploading video:", error);
-          this.alertError = true;
-          this.errorMessage = "Error uploading video:" + error;
+          alertError.value = true;
+          message.value = "Error uploading video:" + error;
         });
     };
 
@@ -154,6 +152,9 @@ export default {
       selectedFile,
       handleFileUpload,
       uploadVideo,
+      uploadSuccess,
+      alertError,
+      message,
     };
   },
 };
