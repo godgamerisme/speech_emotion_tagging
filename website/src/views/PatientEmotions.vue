@@ -1,32 +1,59 @@
 <template>
-  <div class="patient-emotions">
+  <div cla>
     <h3>Patient Emotions</h3>
     <div
       v-for="(emotionType, emotionsOfType) in emotionsGrouped"
       :key="emotionType"
     >
-      <h3 @click="playAll(emotionType)" class="mt-3">
-        <i v-if="emotionsOfType==='fearful'" class="fa-regular fa-face-frown-open"></i>
-        <i v-else-if="emotionsOfType==='sad'" class="fa-regular fa-face-frown"></i> 
-        <i v-else-if="emotionsOfType==='happy'" class="fa-regular fa-face-smile"></i> 
-        <i v-else-if="emotionsOfType==='disgust'" class="fa-regular fa-face-tired"></i>
-        <i v-else-if="emotionsOfType==='neutral'" class="fa-regular fa-face-meh"></i>  
-        <i v-else-if="emotionsOfType==='angry'" class="fa-regular fa-face-angry"></i>    
-        {{ emotionsOfType }}</h3>
-      <ul>
+      <div class="d-grid">
+        <button
+          type="button"
+          @click="playAll(emotionType)"
+          class="btn btn-outline-primary btn-block"
+        >
+          <i
+            v-if="emotionsOfType === 'fearful'"
+            class="fa-regular fa-face-frown-open"
+          ></i>
+          <i
+            v-else-if="emotionsOfType === 'sad'"
+            class="fa-regular fa-face-frown"
+          ></i>
+          <i
+            v-else-if="emotionsOfType === 'happy'"
+            class="fa-regular fa-face-smile"
+          ></i>
+          <i
+            v-else-if="emotionsOfType === 'disgust'"
+            class="fa-regular fa-face-tired"
+          ></i>
+          <i
+            v-else-if="emotionsOfType === 'neutral'"
+            class="fa-regular fa-face-meh"
+          ></i>
+          <i
+            v-else-if="emotionsOfType === 'angry'"
+            class="fa-regular fa-face-angry"
+          ></i>
+          {{ emotionsOfType }}
+        </button>
+      </div>
+
+      <ul class="list-group">
         <li
           v-for="(emotion, index) in emotionType"
           :key="index"
           @click="seekToEmotion(emotion)"
-          class="d-flex flex-row mt-2 align-items-center gap-3"
+          class="list-group-item d-flex justify-content-center"
         >
           <!-- <img class="w-20" :src="emotion.src" :alt="emotion.emotion"> -->
-          <div class="d-flex flex-column">
-            <!-- <span
+
+          <!-- <span
               ><b>{{ emotion.emotion }}</b></span
             > -->
-            <span>{{ emotion.begin_time }} - {{ emotion.end_time }}</span>
-          </div>
+          <span class="timeframe"
+            >{{ emotion.begin_time }} - {{ emotion.end_time }}</span
+          >
         </li>
       </ul>
     </div>
@@ -109,5 +136,17 @@ ul {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+.container-fluid {
+  padding: 0;
+}
+
+.timeframe {
+  cursor: pointer;
+}
+
+.list-group-item {
+  border: none;
 }
 </style>
