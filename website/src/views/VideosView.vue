@@ -51,7 +51,7 @@
                 :alt="video.metadata.patientName"
                 class="thumbnail-image"
               />
-              <p class="m-0">Video Key: {{ video.video_key }}</p>
+              <!-- <p class="m-0">Video Key: {{ video.video_key }}</p> -->
               <p class="m-0">Patient Name: {{ video.metadata.patientName }}</p>
               <p class="m-0">Age: {{ video.metadata.age }}</p>
               <p class="m-0">Date: {{ video.metadata.date }}</p>
