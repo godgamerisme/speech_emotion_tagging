@@ -1,5 +1,5 @@
 <template>
-  <div cla>
+  <div>
     <h3>Patient Emotions</h3>
     <div
       v-for="(emotionType, emotionsOfType) in emotionsGrouped"
