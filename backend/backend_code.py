@@ -16,8 +16,8 @@ app = Flask(__name__)
 CORS(app)
     
 
-# service to upload video to S3 and other data to DynamoDB
-class VideoStoringService:
+# service to upload video and thumbnail to S3 and other data to DynamoDB
+class StoreVideoService:
     def extract_thumbnail(self, video):
         video_format = video.filename.rsplit('.', 1)[1].lower()
 
@@ -80,11 +80,11 @@ class VideoStoringService:
         return None
 
 
-video_storing_service = VideoStoringService()
+store_video_service = StoreVideoService()
 
 
 
-# controller for feeding video to model and uploading to database
+# controller for feeding video to model and uploading data to S3 and DynamoDB
 @app.route('/upload_video', methods=['POST'])
 def process_video():
     try:
@@ -120,7 +120,7 @@ def process_video():
                 print("error converting to mp4")
                 return jsonify({'error': str(e)}), 500
         video_file.seek(0)
-        video_storing_service.store_video(video_file, patient_name, therapist_name, emotion_tags, age, gender)
+        store_video_service.store_video(video_file, patient_name, therapist_name, emotion_tags, age, gender)
         video_file.close()
         print("store success")
         video_preprocessor.clear_all_directories()
@@ -128,13 +128,13 @@ def process_video():
         #remove video from local folder
         # os.remove(destination_path)
 
-        response = {'message': 'Video uploaded successfully',
-                    'emotion_tags': emotion_tags}
+        response = {'message': 'Video uploaded successfully'}
         return jsonify(response)
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+
 def is_avi_file(filename):
     # Check the file extension
     _, file_extension = os.path.splitext(filename)
@@ -142,7 +142,7 @@ def is_avi_file(filename):
     
 
 
-# service that returns the video that the user clicks on
+# service that returns the data corresponding to video key passed to it
 class GetVideoService:  
     def get_video(self, video_key):
         # get video from AWS S3 bucket
@@ -153,7 +153,6 @@ class GetVideoService:
         # get metadata from AWS dynamoDB database
         table = boto3.resource('dynamodb').Table('mcs21fyp')
         response = table.get_item(Key={'key': video_key})
-        print(response)
 
         url = s3.generate_presigned_url(
         'get_object',
@@ -170,7 +169,6 @@ class GetVideoService:
             'date': response['Item']['date'],
             'emotionTags': response['Item']['emotionTags'],            
         }
-
         return metadata
 
 
@@ -189,10 +187,10 @@ def get_video():
 # service that gets a list of all thumbnails with their corresponding video's metadata
 class GetAllVideosService:
     def get_all_videos(self):
-        s3_client = boto3.client('s3')  # Create an S3 client
+        s3 = boto3.client('s3')  # Create an S3 client
 
         # List objects in the bucket and filter for thumbnails
-        thumbnails = [obj for obj in s3_client.list_objects(Bucket='mcs21fyp')['Contents'] if obj['Key'].endswith("_thumbnail")]
+        thumbnails = [obj for obj in s3.list_objects(Bucket='mcs21fyp')['Contents'] if obj['Key'].endswith("_thumbnail")]
 
         table = boto3.resource('dynamodb').Table('mcs21fyp')
         data = []
