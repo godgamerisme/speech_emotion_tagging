@@ -86,6 +86,7 @@ const signin = () => {
     .then((data) => {
       console.log("Successfully signed in!");
       console.log(auth.currentUser);
+      alert("Successfully signed in!");
       router.push("/home");
     })
     .catch((error) => {
@@ -93,15 +94,19 @@ const signin = () => {
       switch (error.code) {
         case "auth/invalid-email":
           errMsg.value = "Invalid email address format.";
+          alert(errMsg.value);
           break;
         case "auth/wrong-password":
           errMsg.value = "Incorrect password. Please try again.";
+          alert(errMsg.value);
           break;
         case "auth/user-not-found":
           errMsg.value = "User not found. Please register.";
+          alert(errMsg.value);
           break;
         default:
           errMsg.value = "Email or Password Incorrect";
+          alert(errMsg.value);
           break;
       }
     });
