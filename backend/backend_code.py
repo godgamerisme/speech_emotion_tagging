@@ -14,17 +14,6 @@ from werkzeug.datastructures import FileStorage
 
 app = Flask(__name__)
 CORS(app)
-
-
-class VideoProcessingService:
-    def __init__(self):
-        pass
-        # self.ml_client = MachineLearningApiClient()
-        # testing push
-
-    def process_video(self, video_data):
-        emotion_tags = self.ml_client.predict_emotion(video_data)
-        return emotion_tags
     
 
 # service to upload video to S3 and other data to DynamoDB
@@ -61,7 +50,7 @@ class VideoStoringService:
             print(f'Error: {e}', file=sys.stderr)
             return None
     
-    # def store_video(self, video_data, tags, patient_name, therapist_name):
+
     def store_video(self, video_data, patient_name, therapist_name, emotion_tags, age, gender):
         test_date='12/12/2023'
         key = patient_name+'-'+str(uuid.uuid4())
@@ -91,7 +80,6 @@ class VideoStoringService:
         return None
 
 
-video_processing_service = VideoProcessingService()
 video_storing_service = VideoStoringService()
 
 
@@ -216,7 +204,6 @@ class GetAllVideosService:
             item = response.get('Item')  # Get the DynamoDB item from the response
             if item:
                 metadata = {
-                    # 'tags': item.get('tags'),  # You can access other attributes similarly
                     'patientName': item.get('patientName'),
                     'therapistName': item.get('therapistName'),
                     'date': item.get('date'),
