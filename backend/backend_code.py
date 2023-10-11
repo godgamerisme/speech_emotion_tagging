@@ -16,7 +16,7 @@ app = Flask(__name__)
 CORS(app)
     
 
-# service to upload video to S3 and other data to DynamoDB
+# service to upload video and thumbnail to S3 and other data to DynamoDB
 class StoreVideoService:
     def extract_thumbnail(self, video):
         video_format = video.filename.rsplit('.', 1)[1].lower()
@@ -84,7 +84,7 @@ store_video_service = StoreVideoService()
 
 
 
-# controller for feeding video to model and uploading to database
+# controller for feeding video to model and uploading data to S3 and DynamoDB
 @app.route('/upload_video', methods=['POST'])
 def process_video():
     try:
@@ -142,7 +142,7 @@ def is_avi_file(filename):
     
 
 
-# service that returns the video that the user clicks on
+# service that returns the data corresponding to video key passed to it
 class GetVideoService:  
     def get_video(self, video_key):
         # get video from AWS S3 bucket
@@ -187,10 +187,10 @@ def get_video():
 # service that gets a list of all thumbnails with their corresponding video's metadata
 class GetAllVideosService:
     def get_all_videos(self):
-        s3_client = boto3.client('s3')  # Create an S3 client
+        s3 = boto3.client('s3')  # Create an S3 client
 
         # List objects in the bucket and filter for thumbnails
-        thumbnails = [obj for obj in s3_client.list_objects(Bucket='mcs21fyp')['Contents'] if obj['Key'].endswith("_thumbnail")]
+        thumbnails = [obj for obj in s3.list_objects(Bucket='mcs21fyp')['Contents'] if obj['Key'].endswith("_thumbnail")]
 
         table = boto3.resource('dynamodb').Table('mcs21fyp')
         data = []
