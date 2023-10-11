@@ -128,13 +128,13 @@ def process_video():
         #remove video from local folder
         # os.remove(destination_path)
 
-        response = {'message': 'Video uploaded successfully',
-                    'emotion_tags': emotion_tags}
+        response = {'message': 'Video uploaded successfully'}
         return jsonify(response)
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+
 def is_avi_file(filename):
     # Check the file extension
     _, file_extension = os.path.splitext(filename)
