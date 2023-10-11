@@ -1,5 +1,4 @@
 import boto3
-import requests
 from flask import Flask, request, jsonify
 import subprocess
 import tempfile
