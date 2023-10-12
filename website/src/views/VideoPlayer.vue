@@ -13,7 +13,7 @@
           Current Emotion: {{ this.currentEmotion }}
         </div>
       </div>
-      <div class="d-flex flex-column gap-3 w-50">
+      <div class="d-flex flex-column gap-3 w-25">
         <patient-details class="card p-4" :session="session" />
         <patient-emotions
           v-if="emotions.length"
