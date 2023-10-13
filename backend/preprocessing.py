@@ -1,4 +1,3 @@
-from typing import Any
 from moviepy.editor import VideoFileClip
 import os
 from pydub import AudioSegment
@@ -10,11 +9,15 @@ import scipy.signal
 import shutil
 
 class PreprocessVideo:
-    def __init__(self,video_path= None):
+    def __init__(self,video_path=None,run=True):
         self.video_path = video_path
+        self.output_audio_path = None
+        self.output_frame_folder = None
         self.preprocessed_audio_array = []
+        self.drop_index = []
         self.duration = None
-        self.run()
+        if run:
+            self.run()
 
     def get_preprocessed_audio_array(self):
         return self.preprocessed_audio_array
@@ -32,12 +35,27 @@ class PreprocessVideo:
         self.preprocessed_audio_array = self.preprocessing(frame_output_folder)
 
     def extract_audio(self,video_path, output_audio_path):
+        self.output_audio_path = output_audio_path
+        #Ensure path exists
+        if not os.path.exists(video_path):
+            print(f"The video '{video_path}' does not exist.")
+            return
+        
+        # Create the output folder based on give output path
+        os.makedirs(os.path.dirname(output_audio_path), exist_ok=True)
+
         video_clip = VideoFileClip(video_path)
         audio_clip = video_clip.audio
         self.duration = audio_clip.duration
         audio_clip.write_audiofile(output_audio_path)
 
-    def split_audio_into_frames(self,audio_path, output_frame_folder, frame_duration_ms):
+    def split_audio_into_frames(self,audio_path, output_frame_folder, frame_duration_ms=3000):
+        self.output_frame_folder = output_frame_folder
+        # Ensure the path exists
+        if not os.path.exists(audio_path):
+            print(f"The audio '{audio_path}' does not exist.")
+            return
+        
         audio = AudioSegment.from_file(audio_path)
         # self.clear_directory(output_frame_folder)
 
@@ -80,6 +98,10 @@ class PreprocessVideo:
 
 
     def preprocessing(self,frame_output_folder):
+        # Ensure the path exists
+        if not os.path.exists(frame_output_folder):
+            print(f"The directory '{frame_output_folder}' does not exist.")
+            return
         # Initialize an empty list to store audio fragment paths
         audio_paths = []
 
@@ -128,15 +150,22 @@ class PreprocessVideo:
         return audios,drop_index
     
     def clear_all_directories(self):
+        # Ensure the path exists
+        if not os.path.exists("./backend/output"):
+            print(f"The directory './backend/output' does not exist.")
+            return
+        if not os.path.exists("./backend/video"):
+            print(f"The directory './backend/video' does not exist.")
+            return
         self.clear_directory("./backend/output")
         self.clear_directory("./backend/video")
 
 if __name__ == "__main__":
 
-    # Audio input path
-    # video_path = "./video/Ses01F_impro01.avi"
-    # video_preprocessor = PreprocessVideo(video_path=video_path)
-    # preprocessed_audio_array = video_preprocessor.get_preprocessed_audio_array()
-
-    pass
+    # video input path
+    video_path = "./backend/video/Ses01F_impro01.avi"
+    video_preprocessor = PreprocessVideo(video_path=video_path)
+    preprocessed_audio_array = video_preprocessor.get_preprocessed_audio_array()
+    # print("preprocessed_audio_array",preprocessed_audio_array)
+    
 

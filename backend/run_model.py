@@ -2,13 +2,17 @@ from preprocessing import PreprocessVideo
 from keras.models import model_from_json
 import pandas as pd
 import datetime
+import os
 
 class EmotionPredictor:
     def __init__(self):
-        # Load your emotion prediction model here (replace this with your actual loading logic)
         self.model = self.load_model()
 
     def load_model(self):
+        #check if model exist
+        if not os.path.exists('./backend/model/Audio_2DCNN_4L_R2.json'):
+            print("Model does not exist")
+            return
         model_file = open('./backend/model/Audio_2DCNN_4L_R2.json', 'r')
         model_json = model_file.read()
         model_file.close()

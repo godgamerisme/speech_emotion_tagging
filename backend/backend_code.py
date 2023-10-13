@@ -157,7 +157,7 @@ class GetVideoService:
         url = s3.generate_presigned_url(
         'get_object',
         Params={'Bucket': 'mcs21fyp', 'Key': video_key},
-        ExpiresIn=10000  # URL will expire in 10000 seconds
+        ExpiresIn=99999  # URL will expire in 99999 seconds
         )
 
         metadata = {
