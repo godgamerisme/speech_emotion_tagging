@@ -117,14 +117,19 @@ export default {
     playEmotion(emotion) {
       return new Promise((resolve) => {
         const startTime = this.convertTimeToSeconds(emotion.begin_time);
+        const endTime = this.convertTimeToSeconds(emotion.end_time);
         this.videoPlayer.currentTime = startTime;
         this.videoPlayer.play();
-        const duration =
-          this.convertTimeToSeconds(emotion.end_time) - startTime + 1;
-        setTimeout(() => {
-          this.videoPlayer.pause();
-          resolve();
-        }, duration * 1000);
+
+        const onTimeUpdate = () => {
+          if (this.videoPlayer.currentTime >= endTime) {
+            this.videoPlayer.pause();
+            this.videoPlayer.removeEventListener("timeupdate", onTimeUpdate);
+            resolve();
+          }
+        };
+
+        this.videoPlayer.addEventListener("timeupdate", onTimeUpdate);
       });
     },
   },
