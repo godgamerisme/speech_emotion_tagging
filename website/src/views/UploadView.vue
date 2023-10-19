@@ -114,6 +114,50 @@ export default {
     };
 
     const uploadVideo = () => {
+
+      // No File Selected
+      if (selectedFile.__v_isRef) {
+        alertError.value = true;
+        message.value = "Please attach a file before clicking upload";
+        return;
+      }
+
+      // Invalid File Type Selected
+      if (selectedFile.type != "video/mp4" && selectedFile.type != "video/avi") {
+        alertError.value = true;
+        message.value = "Please upload either an MP4 or AVI File";
+        return;
+      }
+
+      // Invalid patient name
+      if (!patientName.value.trim()) {
+        alertError.value = true;
+        message.value = "Please enter the patient's name.";
+        return;
+      }
+
+      // Invalid therapist name
+      if (!therapistName.value.trim()) {
+        alertError.value = true;
+        message.value = "Please enter the therapist's name.";
+        return;
+      }
+
+      // Invalid age datatype
+      if (typeof patientAge.value != "number") {
+        alertError.value = true;
+        message.value = "Please enter only numbers for Age";
+        return;
+      }
+
+      // Invalid patient age range
+      console.log(typeof patientAge.value != "number")
+      if (!patientAge.value || patientAge.value < 13 || patientAge.value > 100) {
+        alertError.value = true;
+        message.value = "Please enter a valid age between 13 and 100.";
+        return;
+      }
+
       const formData = new FormData();
       formData.append("video", selectedFile);
       formData.append("patient_name", patientName.value);
