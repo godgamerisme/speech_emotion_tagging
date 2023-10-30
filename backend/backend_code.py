@@ -87,6 +87,9 @@ store_video_service = StoreVideoService()
 # controller for feeding video to model and uploading data to S3 and DynamoDB
 @app.route('/upload_video', methods=['POST'])
 def process_video():
+    """
+     This API endpoint takes in a video file and process the video to predict the emotion tags and upload the video to S3 and the metadata to DynamoDB
+    """
     try:
         video_file  = request.files['video']
         patient_name = request.form.get('patient_name')

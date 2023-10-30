@@ -21,6 +21,10 @@ class EmotionPredictor:
         return model
     
     def predict_emotions(self,preprocessed_audio_array,audio_duration,corrupted_audio_index=None):
+        """
+         This function takes in the preprocessed audio array and uses the model to predict the emotion tags 
+          and returns the emotion tags in timeframe HH:MM:SS format
+        """
         # Replace this with your actual emotion prediction logic
         emotion_tags = self.model.predict(preprocessed_audio_array,batch_size=16,verbose=1)
         emotion_tags = emotion_tags.argmax(axis=1)
