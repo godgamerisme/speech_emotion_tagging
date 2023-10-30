@@ -83,7 +83,6 @@ class StoreVideoService:
 store_video_service = StoreVideoService()
 
 
-
 # controller for feeding video to model and uploading data to S3 and DynamoDB
 @app.route('/upload_video', methods=['POST'])
 def process_video():
@@ -109,11 +108,10 @@ def process_video():
         audio_duration = video_preprocessor.get_duration()
         emotion_predictor = EmotionPredictor()
         emotion_tags = emotion_predictor.predict_emotions(preprocessed_audio_array,audio_duration,corrupted_audio_index)
-        print("here")
         
-        #check if its an avi file
+        # check if its an avi file
         if is_avi_file(filename):
-            #use ffmpeg to convert to mp4
+            # use ffmpeg to convert to mp4
             print("converting to mp4")
             try:
                 subprocess.run(['ffmpeg', '-i', destination_path, destination_path.replace(".avi", ".mp4")],check=True)
@@ -127,9 +125,6 @@ def process_video():
         video_file.close()
         print("store success")
         video_preprocessor.clear_all_directories()
-        
-        #remove video from local folder
-        # os.remove(destination_path)
 
         response = {'message': 'Video uploaded successfully'}
         return jsonify(response)
@@ -150,8 +145,6 @@ class GetVideoService:
     def get_video(self, video_key):
         # get video from AWS S3 bucket
         s3 = boto3.client('s3')
-        # bucket = boto3.resource('s3').Bucket('mcs21fyp')
-        # video = bucket.get_object(Key=video_key).body
         
         # get metadata from AWS dynamoDB database
         table = boto3.resource('dynamodb').Table('mcs21fyp')
